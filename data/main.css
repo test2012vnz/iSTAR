@@ -1,0 +1,594 @@
+body {
+	font-family: "Lato", sans-serif;
+	background-image: linear-gradient(#2193b0, #6dd5ed);
+}
+
+.menu-icon-css div {
+  width: 27px;
+  height: 5px;
+  background-color: black;
+  margin: 6px 0;
+}
+
+#container{
+	overflow: auto;
+	width: 95%;
+	height: 95%;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #ecf0f1;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+#loading{
+	position: fixed;
+	top: 40%;
+	left: 50%;
+	/* bring your own prefixes */
+	transform: translate(-50%, -50%);
+}
+.nav {
+	position: relative;
+    float: left;
+    width: 20%;				/* */
+}
+/* Style the buttons inside the tab */
+div.nav button {
+    display: block;
+    background-color: inherit;
+    color: black;
+    padding: 10px 16px;
+    width: 100%;
+    border: none;
+    outline: none;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 18px;
+    text-align: center;
+    font-weight: 700;
+}
+/* Create an active/current "tab button" class */
+div.nav button.active {
+    background-color: #3498DB;
+}
+.sidenav {
+	height: calc(100% - 60px);
+	width: 0;
+	position: fixed;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	background-color: #c7ecee;
+	/*background-image: linear-gradient(#06beb6, #48b1bf);*/
+	overflow-x: hidden;
+	transition: 0.5s;
+	padding-top: 60px;
+}
+.sidenav a {
+/*	padding: 8px 8px 8px 32px;*/
+font-weight: bold;
+	width: 80%;
+	text-align: center;
+	text-decoration: none;
+	font-size: 25px;
+	color: #1289A7;
+	display: block;
+	transition: 0.3s;
+	border-bottom: 1px solid red;
+}
+
+.sidenav a:hover {
+	color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+	position: absolute;
+	font-size: 36px;
+	left: 50%;
+	top: 30px;
+	transform: translate(-50%, -50%);
+}
+.sidenav #nav-close{
+	display: none;
+}
+#menu-bar{
+	display: flex;
+	background-color: #22a6b3;
+	align-items: center;
+	height: 50px;
+	width: 100%;
+	border-radius: 7px 7px 0px 0px;
+}
+.menu-icon{
+  	display: flex;         
+  	justify-content: center;
+  	align-items: center;
+	background-color: #95afc0;
+	width:50px;
+	height: 50px;
+	border-radius: 7px;
+}
+
+.lang{
+	padding-right: 5px;
+	margin-left: auto;
+}
+/*TAB*/
+.tab, .tab1 {
+  overflow: hidden;
+  align-items: center;
+  /*border: 1px solid #ccc;*/
+  background-color: #7ed6df;
+  border-radius: 0px 0px 7px 7px;
+}
+/*.tab1{ border-radius: 7px; }*/
+/* Style the buttons inside the tab */
+.tab button , .tab1 button{
+	width: auto;
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover , .tab1 button:hover{
+  background-color: #ff6666;
+}
+
+/* Create an active/current tablink class */
+.tab button.active, .tab1 button.active {
+  background-color: #ff6666;
+}
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+.tabcontent *{
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+.tab a, .tab1 a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+.tab .icon,.tab1 .icon{
+	display: none;
+}
+.collapsible {
+	background-color: #1abc9c;
+	color: white;
+	cursor: pointer;
+	padding: 5px;
+	margin: 5px;
+	width: 100%;
+	border: none;
+	text-align: left;
+	outline: none;
+	font-size: 15px;
+}
+.colapse-relay{padding-left: 15px;}
+.colapse-relay *{
+	margin: 1px;
+}
+/***************************************************/
+.hdsd{
+	display: block;
+	position: relative;
+	float: right;
+    width: 250px;				/* */
+
+}
+#wraper{
+	position: relative;
+	width: calc(100% - 280px);
+	padding-left: 10px;
+	/*margin: 5px;	wseeeeeeeeeeeeeeeeeeeeeeeeeeee*/
+}
+#title{
+	background-color: #74b9ff;
+}
+/* The Modal (background) */
+.modal {
+	display: none;
+	z-index: 1; /* Sit on top */
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+/* Modal Content */
+.modal-content {
+	align-items: center;
+	width: 80%;
+	height: 60%;
+		position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #fefefe;
+	text-align: center;
+	border: 1px solid #888;
+  
+}
+#modal-close{
+	float: right;
+	padding-right: 5px;
+	padding-top: 5px;
+}
+/* Create two equal columns that floats next to each other */
+.col-left {
+	float: left;
+	padding: 10px;
+    width: 47%;
+    height: auto;
+    border: 1px solid #ccc;
+	background-color: #dfe6e9;
+    border-radius: 7px;
+    transition: height 0.15s ease-out;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.col-right {
+	float: right;
+    width: 47%;
+    height: auto;
+	padding: 10px;
+	border: 1px solid #ccc;
+    background-color: #dfe6e9;
+    border-radius: 7px;
+    transition: height 0.15s ease-out;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.col-tittle{
+	background-color: #63cdda;
+	display: flex;
+	height: 30px;
+	align-items: center;
+	border-radius: 7px;
+}
+#div-table-wifi, #div-table-rs485{
+	margin-top: 15px;
+    overflow:scroll;
+    height:60%;
+    width: 50%;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+#div-table-rs485{
+	width: auto;
+	box-shadow: none;
+
+}
+#istar-system-content, #istar-slot-time, #serial-setting-content, #diff-auto, #diff-manu, .mqtt-el,
+#rs485-slave, #rs485-master, #test-wraper, .update-content{
+	border-radius: 7px;
+	padding: 15px;
+    height:auto;
+    width: 450px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+#diff-auto, #diff-manu{ width: auto; }
+.mqtt-el{width: auto;}
+.other-option{
+	display: none;
+	padding-left: 280px;
+}
+/*****************************************/
+#table-wifi, #table-rs485 ,#table-firmware{
+	border-collapse: collapse;
+	width: 100%;
+}
+#table-wifi tr:nth-child(even){background-color: #f2f2f2;}
+#table-rs485 tr:nth-child(even){background-color: #f2f2f2;}
+#table-wifi td, #table-wifi th ,#table-firmware td, #table-firmware th{
+	padding: 8px;
+}
+#table-wifi th, #table-firmware th{
+	top:0px;
+    position: sticky;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	text-align: center;
+	background-color: #95a5a6;
+}
+#table-rs485 td{
+	text-align: center;
+}
+#table-firmware td{
+	text-align: center;
+}
+/*****************************************/
+.btn, .input-type, .select-type{
+	font-size: 18px;
+	width: 42px;
+	height: 35px;
+	text-align: center;
+	/*margin:2px auto;*/
+	border-radius: 5px;
+	border-color: transparent;
+}
+.select-type{
+	width: auto;
+}
+.input-type{
+	border: 1px solid #3498DB;
+}
+textarea{
+	border: 1px solid #3498DB;
+	border-radius: 5px;
+}
+.spanx{
+	width: 150px;
+}
+.btn{
+	width: 100px;
+	background-color: #95afc0;
+}
+.btn:focus, .input-type:focus{
+	border: 1px solid #3498DB;
+  	outline: none;
+}
+.btn:active {
+	background-color: #ffff;
+}
+.btn-test{
+	width: 60px;
+}
+.lb1, .lb2{
+	display: inline-block;
+	width: 180px;
+}
+.wifi-text{
+
+}
+.radio-btn {
+    width: 25px;
+    height: 25px;
+}
+.raito-lb, .radio-btn{
+  vertical-align: middle;
+}
+.enable-switch{width: 80px; display: inline-block;}
+.abc{display: inline-block; right: 0px;}
+/******************************************/
+	.lb-toggle{
+		display: flex;
+		vertical-align: middle;
+		 align-items: center;
+	}
+	.toggle {
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		appearance: none;
+		width: 62px;
+		height: 32px;
+		display: inline-block;
+		position: relative;
+		border-radius: 50px;
+		overflow: hidden;
+		outline: none;
+		border: none;
+		cursor: pointer;
+		background-color: #707070;
+		transition: background-color ease 0.3s;
+	}
+
+	.toggle:before {
+		content: "on off";
+		display: inline-block;
+		position: absolute;
+		z-index: 2;
+		width: 28px;
+		height: 28px;
+		background: #fff;
+		left: 2px;
+		top: 2px;
+		border-radius: 50%;
+		font: 10px/28px Helvetica;
+		text-transform: uppercase;
+		font-weight: bold;
+		text-indent: -22px;
+		word-spacing: 37px;
+		color: #fff;
+		text-shadow: -1px -1px rgba(0,0,0,0.15);
+		white-space: nowrap;
+		box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+		transition: all cubic-bezier(0.3, 1.5, 0.7, 1) 0.3s;
+	}
+	.toggle:checked {
+		background-color: #4CD964;
+	}
+	.toggle:checked:before {
+		left: 32px;
+	}
+/*****************************************/
+
+#lb-upload {
+	padding: 10px;
+	text-align: center;
+	background-color: #95afc0;
+	border-radius: 7px;
+}
+#uploadBtn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+#bar, #prgbar {
+	background-color: #f1f1f1;
+	border-radius: 10px
+}
+
+#bar {
+	background-color: #3498db;
+	width: 0%;
+	height: 10px
+}
+
+#chose-device{
+	/*display: none;*/
+	padding-left: 15px;
+}
+
+.status-content{
+	padding-left: 10px;
+}
+.status-content * {
+	display: inline-block;
+	margin-top: 5px;
+}
+#hdsd-serial-setting p, #hdsd-other p, .hdsd-connection p,  .hdsd-istar p{
+	padding-left: 10px;
+	padding-right: 5px;
+	line-height: 1.5;
+}
+#chose-device a{font-size: 18px;}
+#rs485-slave-id{width: 180px;}
+#open-hdsd{ position: fixed; top: 40%; display: none; width: 50px; transition: 0.3s;}
+/*****************************************/
+
+.test-content * {
+	margin: 1px;
+}
+.spinner {
+  margin: 0px auto 0;
+  width: 70px;
+  text-align: center;
+}
+
+.spinner > div {
+  width: 18px;
+  height: 18px;
+  background-color: #333;
+
+  border-radius: 100%;
+  display: inline-block;
+  -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+
+@-webkit-keyframes sk-bouncedelay {
+  0%, 80%, 100% { -webkit-transform: scale(0) }
+  40% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% { 
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 40% { 
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+}
+/*****************************************/
+@media screen and (max-width: 750px) {
+	#container{width: 100%; height: 100%; box-shadow: none;}
+	.hdsd{position: absolute; width: 0px;}
+	#wraper{width: 100%; padding-left: 0px; padding-right: 0px; position: fixed;}
+	#menu-bar{height: 40px; width: 100%;}
+	.menu-icon{width: 40px; height: 35px;}
+	.menu-icon span i{ font-size: 25px; }
+	#chose-device{ padding-left: 5px; display: inline-block;}
+	#chose-device a{ font-size: 16px; width: 110px;}
+	#chose-device select{font-size: 16px; width: calc(100% - 195px);}
+	#chose-device button{font-size: 16px; width: 85px;}
+	.lang{display: none;}
+	#istar-system-content, #istar-slot-time, #serial-setting-content, #diff-auto, #diff-manu, .mqtt-el,
+	#rs485-slave, #rs485-master{
+		width: auto;
+	}
+	.other-option{padding-left: 0px;}
+	#open-hdsd{ margin-top: 90%; display: block;}
+	.input-type{	width: 42px;height: 35px;}
+	.btn-delete{ width: auto; }
+	#rs485-slave-id{ width: 120px; }
+	#hardware-test{padding-left: 15px;}
+	.sidenav {padding-top: 15px;  width: 0px;}
+	.sidenav #nav-close {
+		display: block;
+		position: absolute; 
+		width: auto;
+		border-bottom: none;
+		right: 0px;
+		top: 20px;
+		transform: translate(-50%, -50%);
+	}
+	.nav{height: calc(100%-70px); padding-top: 70px;}
+	.tab button,.tab1 button{ font-size: 17px; height: 40px;}
+	.tab button:not(:first-child) {display: none;}
+	.tab a.icon {
+		padding:0;
+		right: 0;
+		display:  flex;
+		width: 40px;
+		height: 40px;
+		align-items: center;
+		position: absolute;
+	}
+	.tab.responsive {position: relative;}
+	.tab.responsive .icon {
+		justify-content: center;
+		position: absolute;
+		height: 40px;
+  	}
+  	.tab.responsive button {
+		float: none;
+		width: 100%;
+		display: block;
+		text-align: left;
+  	}
+	.tabcontent{
+		padding: none;
+	}
+	.col-left, .col-right{
+		float: none;
+		padding: 2px;
+		min-width: 100%;
+		height: auto;
+	}
+	.col-tittle{ padding: none;}
+	.radio-btn { width: 20px; height: 20px;}
+	#div-table-wifi{width: 100%; max-height: 60%;}
+	.enable-switch{padding-left: 70px;}
+	.areatxt{width: 100%;}
+	#test-wraper{
+		width: auto;
+		margin-right: 10px;
+	}
+}

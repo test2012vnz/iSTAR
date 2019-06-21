@@ -1,0 +1,604 @@
+<html>
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" /> 
+	<link href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAACWFBMVEX///7+/v7////m6vDx8/f//////////////fz//v3///7///7///7///7///7////y9vnL3Ov/5eH0tLDypKDzpqH40Mz//////v3//v3///7///7///7///79//////upmq/iqav908/63dr4zMjwko3uhoD98O///v3///7///7///79/v//1Mu1sMKvyOH8/f7//v73yMXtfXf++fn///7///7//v376uj/7+rf6fNui7b///78/Pz9/Pv++vn1t7PypaD//fv///7///7////99PH//f3///9Zfa+9y9/8/f39/v3//f3//f3wk43+9vT///7///7///7//v38/PyMpcdBbqe51evq7/T9/Pv////ysa342Nb////+/fz///7///7///79/f3L2ulecqDOh42nuNHk6vL+/Pv6ycX70s///f3///7///7//v31/v/qzc/TeHt2lr84ZJ9ig7KSr9CwpbnIvszb5/Lt7/T///7///77/PyputRNeK16pMyrvdXBzuDb4evg6/TdvcHm5erv9Pj6+/v///7///77/PzQ2ug2Yp6HoMT7+/v+/v7/9vP+3Nf//v7///////78/f3L1uVegbHBzuD9/v79/f38/f3+//776+f9+Pb+///+/v7///79/v23x9uOpsfv8/f8/f3+/v7///7///7//v3//fz///7///7///6/zd+xwtj+/v79/f3///7///7///7///7///7///7d5O3O2Ob9/f3+/v3///7///7///7///7///7m6/H+/v79/v3///7///7HPPb8AAAAAWJLR0QCZgt8ZAAAAAd0SU1FB+MFEAQFDlk7av0AAAEXSURBVBjTY2BgZGJmYWJlY2fi4OTi5uFh4OXjFxAUEhYRFROXkJSS5mGQkZWTV1BUUlZRVVNn0tDkYdDS1tHV02cyMGQyMjZhMjVjMGeysLSytrG1s2dycGRycmZwcXVz9/D0YvL28fXzD2AKZAgKDgllCguPiGSKio6JjYtnSEhMSmZKSU1Lz8hkyspmymHg4c3Nyy8oLCouKS0rr6isYuCprqllqqtvaGxqbmlta+9g6OzqZurp7etnmsA0cRLT5CkMU6cxTZ8xk2nW7Dlz581fsHARw2KmJUuXMS1fsXLV6jVr163nYWDasJFp0+YtnVu3rdq+Y6cZD8Ou3Ux79u7bz8Oz/sDBQ7xA3x4+cvRY0HEeOAAAOStRdfBraBYAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMDUtMTZUMDQ6MDU6MTQtMDQ6MDB54cMHAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTA1LTE2VDA0OjA1OjE0LTA0OjAwCLx7uwAAAABJRU5ErkJggg==" rel="icon" type="image/x-icon"/>
+	<link rel="stylesheet" type="text/css" href="./main.css" id="main.css">
+</head>
+<style type="text/css">
+
+</style>
+<body>
+	<div id="loading">
+		<h2>LOADING</h2>
+	</div>
+	<div id="container" style="display: none;">
+	<div id="main">
+		<div id="mySidenav" class="sidenav nav">
+			<a class="icon" id="nav-close" onclick="openNav()">✖
+			</a>
+			<a href="javascript:void(0)" class="closebtn" onclick="openModal()">iSTAR</a>
+		  	<button class="tablinks" onclick="navState(event, 'hardware-test')" id="hwtest">KIỂM TRA PHẦN CỨNG</button>
+		  	<button class="tablinks" onclick="navState(event, 'serial-setting')" id="deviceset">CÀI ĐẶT THIẾT BỊ</button>
+		  	<button class="tablinks" onclick="navState(event, 'connection-setting')" id="conectset">CÀI ĐẶT KẾT NỐI</button>
+		  	<button class="tablinks" onclick="navState(event, 'device-setting')" id="devicecontent">CÀI ĐẶT HỆ THỐNG</button>
+		  	<button class="tablinks" onclick="navState(event, 'status-tab')" id="statustab">TRẠNG THÁI THIẾT BỊ</button>
+		  	<button class="tablinks" onclick="navState(event, 'admin-tab')" id="adminsetting">ADMIN</button>
+		  	<button class="tablinks" id="logoutid" onclick="logout()">ĐĂNG XUẤT</button> 
+			
+		</div>
+		<div id="wraper" style="float: left;">
+			<div id="menu-bar">
+				<div class="menu-icon" onclick="openNav()" >
+					<span id="btn-sidebar" >
+					<div class="menu-icon-css">
+						<div></div>
+						<div></div>
+						<div></div>
+					</div>
+					</span>
+				</div>
+				<div id="chose-device">
+					<a id="txt-devset-choose">Chọn ứng dụng: </a>
+					<select class="select-type" id="id-select-product" onchange="selectProduct()">
+						<option value="1">MÁY NƯỚC NÓNG QMGĐ</option>
+						<option value="2">KHÁC</option>
+					</select>
+					<button class="btn" id="btn-confirm" onclick="SetProduct()">Xác nhận</button>
+				</div>
+				<div class="lang" id="lang-content">
+					<a id="lang" style="font-size: 18px;">Ngôn ngữ: </a>
+					<select class="select-type" id="lang_select" style="width: auto;" onchange="lang_change()">
+						<option value="vi">Tiếng Việt</option>
+						<option value="en">English</option>
+					</select>
+
+				</div>
+			</div>
+			<div style="">
+				<div class="navcontent" id="hardware-test">
+					<h3>KIỂM TRA PHẦN CỨNG</h3>
+					<div style="padding-left: 10px;  margin-bottom: 10px;">
+						<label  class="lb-toggle "><span class="">Chế độ kiểm tra</span><span class="enable-switch" style=""></span><input class="toggle abc" type="checkbox" id="test-enable"  onclick="ChangeTest()"/></label>
+					</div>
+					<div id="test-wraper">
+						<h3 style="margin-bottom: 5px;">Đèn, còi</h3>
+						<div class="test-content">
+							<label><a style="display: inline-block; width: 200px;">RUN LED</a><button class="btn btn-test" onclick="TestComponents('LED',1,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('LED',1,0)">Tắt</button></label><br>
+							<label><a style="display: inline-block; width: 200px;">CONNECTION LED</a><button class="btn btn-test" onclick="TestComponents('LED',2,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('LED',2,0)">Tắt</button></label><br>
+							<label><a style="display: inline-block; width: 200px;">SPEAKER</a><button class="btn btn-test" onclick="TestComponents('LED',3,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('LED',3,0)">Tắt</button></label><br>
+						</div> 
+						<hr style="width: 100%;">
+						<h3 style="margin-bottom: 5px;">Cảm biến nhiệt độ</h3>
+						<div class="test-content" id="adc-test">
+							<label><a style="display: inline-block; width: 120px;">ADC 1</a><span class="adc-test" style="display: inline-block; width: 90px;">0</span><button class="btn" onclick="TestComponents('ADC',0,0)" style="padding: none;">Kiểm tra</button></label><br>
+							<label><a style="display: inline-block; width: 120px;">ADC 2</a><span class="adc-test">0</span><button class="btn" style="visibility: hidden;"></button></label><br>
+							<label><a style="display: inline-block; width: 120px;">ADC 3</a><span class="adc-test">0</span><button class="btn" style="visibility: hidden;"></button></label>
+						</div>
+						<hr style="width: 100%;">
+						<h3 style="margin-bottom: 5px;">Relay</h3>
+						<div class="test-content">
+							<label><a style="display: inline-block; width: 200px;">Relay 1</a><button class="btn btn-test" onclick="TestComponents('RL',1,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('RL',1,0)">Tắt</button></label><br>
+							<label><a style="display: inline-block; width: 200px;">Relay 2</a><button class="btn btn-test" onclick="TestComponents('RL',2,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('RL',2,0)">Tắt</button></label><br>
+							<label><a style="display: inline-block; width: 200px;">Relay 3</a><button class="btn btn-test" onclick="TestComponents('RL',3,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('RL',3,0)">Tắt</button></label><br>
+						</div>
+						<!-- <hr style="width: 100%;"> -->
+					</div>
+					<div>
+						<button onclick="sendSocketMsg()">test ws</button>
+					</div>
+					<div class="spinner"> 
+						<div class="bounce1"></div> 
+						<div class="bounce2"></div> 
+						<div class="bounce3"></div> 
+					</div>
+				</div>
+				<div class="navcontent" id="serial-setting">
+					<div>
+						<div>
+						<h3 id="txt-hw-time-setting">CÀI ĐẶT THỜI GIAN</h3>
+						<div id="device-setting-time0" style="margin-bottom: 10px;">
+							<input class="input-type time-field" id="TimeHour" type="text" maxlength="2" /><a> :</a>
+							<input class="input-type time-field" id="TimeMinute" type="text" maxlength="2" /> <a> :</a>
+							<input class="input-type time-field" id="TimeSec" type="text" maxlength="2" /> <a> Ngày:</a>
+							<input class="input-type time-field" id="TimeDay" type="text" maxlength="2" /><a>/</a>
+							<input class="input-type time-field" id="TimeMonth" type="text" maxlength="2" /><a>/</a>
+							<input class="input-type time-field" id="TimeYear" type="text" maxlength="4" style="width: 60px;" /><br>
+						</div>
+						<button class="btn btn-set" onclick="set_device_param()">Cập nhật</button>
+						</div>
+						<h3 id="txt-setting-serial">Cài đặt số  Serial</h3>
+						<input class="input-type" id="serial-number" type="text" placeholder="SERIAL NUMBER" style="width: 200px;">
+						<button class="btn" onclick="SetSerialNumber()">Cập nhật</button><br>
+						</div>
+						<h3>Logger</h3>
+						<div>
+							<textarea class="areatxt" rows="17" cols="120" id="logger" style="resize: none;"></textarea><br>
+						</div>
+					</div>
+				</div>
+				<div class="navcontent" id="connection-setting">
+					<div class="tab1" id="connection-tab">
+					  <button class="tablinks tabwifi" onclick="tabState(event, 'tab-wifi','tabwifi')" id="tab-wifi-content" style="width: 30%">WIFI</button>
+					  <button class="tablinks tabwifi" onclick="tabState(event, 'tab-rs485','tabwifi')" style="width: 30%">RS485</button>
+					  <button class="tablinks tabwifi" onclick="tabState(event, 'tab-mqtt','tabwifi')" style="width: 30%">MQTT</button>
+					</div>
+					<div class="tabcontent" id="tab-wifi">
+						<h3 id="txt-conset-wifi">Thiết lập kết nối WiFi</h3>
+						<div>
+							<input class="input-type" id="SSID" type="text" placeholder="SSID" style="width: 180px;">
+							<button class="btn" id="btn-scan-wifi" onclick="ScanButton()">Quét</button><br>
+							<input class="input-type" id="PASS" type="text" placeholder="PASSWORD" style="width: 180px;">
+							<button class="btn" id="btn-connect-wifi" onclick="SetWifi()">Kết nối</button>
+						</div>
+						<div id="div-table-wifi">
+							<table id="table-wifi">
+								<tbody id="WIFI_SCAN">
+									<col width="80%">
+	  								<col width="20%">
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="tabcontent" id="tab-rs485" style="overflow: auto;">
+						<h3 id="txt-rs485-status">Cài đặt RS485</h3>
+						<div>
+							<input class="radio-btn" id="raito-rs485-sl" type="radio" name="raito-rs485" onchange="raitingHidden('rs485-slave','rs485-master','rs485-slave')">
+							<a class= "raito-lb">Chế độ Slave</a>
+							<input class="radio-btn" id="raito-rs485-ma" type="radio" name="raito-rs485" onchange="raitingHidden('rs485-master','rs485-slave','rs485-master')">
+							<a class= "raito-lb">Chế độ Master</a>
+						</div>
+						<div id="rs485-slave">
+							<span>Slave ID: </span>
+							<input class="input-type" type="text" id="rs485-slave-id" >
+							<button class="btn" onclick="send_rs485_slave()">Cập nhật</button>
+						</div>
+						<div id="rs485-master">
+							<select class="input-type" id="rs485-list-device" style="width: 150px;">
+						        <option value="0">Đồng hồ MFM</option>
+						        <option value="1">Đồng hồ DPM</option>
+						        <option value="2">Inverter SolarBK</option>
+						    </select>
+						    <input class="input-type" id="rs485-read-device-id" type="text" placeholder="ID">
+						    <button class="btn btn-add" onclick="add_rs485_read_device();">Thêm</button> 
+						    <div id="div-table-rs485" style="margin-top: 15px;">
+							    <table id="table-rs485" align="center">
+								  <tr style="background-color: #95a5a6; height: 35px;">
+								    <th>STT</th>
+								    <th>Tên thiết bị</th>
+								    <th>ID</th>
+								    <th></th>
+								  </tr>
+
+							    </table>
+						    </div>
+						</div>
+
+					</div>
+					<div class="tabcontent" id="tab-mqtt">
+						<h3>Cài đặt MQTT</h3>
+						<div class="mqtt-el">
+							<a>endpoint:</a><br>
+							<textarea class="areatxt" rows="2" cols="70" id="end-point" style="resize: none;"></textarea>
+							<br>
+							<a>Root CA:</a><br>
+							<textarea class="areatxt" rows="4" cols="70" id="root-ca" style="resize: none;"></textarea><br>
+							<input class="" type="file" id="file-rootca" onchange="readFile('file-rootca','root-ca')"><br>
+							<a>CERTIFICATE:</a><br>
+							<textarea class="areatxt" rows="4" cols="70" id="certificate" style="resize: none;"></textarea><br>
+							<input class="" type="file" id="file-cer" onchange="readFile('file-cer','certificate')"><br>
+							<a>PRIVATE KEY:</a><br>
+							<textarea class="areatxt" rows="4" cols="70" id="private-key" style="resize: none;"></textarea><br>
+							<input class="" type="file" id="file-pri" onchange="readFile('file-pri','private-key')"><br>
+						</div>
+						<button class="btn" onclick="SetMQTT()">Cập nhật</button>
+					</div>
+				</div>
+				<div class="navcontent" id="device-setting">
+					<div id="istar-content">
+					<div class="tab" id="tab-istar">
+					  <button class="tablinks tabsystem" onclick="tabState(event, 'istar-system','tabsystem')" id="btn-istar-sys">THÔNG SỐ HỆ THỐNG</button>
+					  <button class="tablinks tabsystem" onclick="tabState(event, 'istar-conv','tabsystem')" id="btn-istar-conv" >BƠM ĐỐI LƯU</button>
+					  <button class="tablinks tabsystem" onclick="tabState(event, 'istar-return','tabsystem')" id="btn-istar-return">BƠM HỒI</button>
+					  <button class="tablinks tabsystem" onclick="tabState(event, 'istar-heater','tabsystem')" id="btn-istar-heater">TRỞ GIA NHIỆT</button>
+					  <button class="tablinks tabsystem" onclick="tabState(event, 'istar-sche','tabsystem')" id="btn-istar-schedule">THỜI GIAN</button>
+					    <a style="float: right;" class="icon" onclick="responsiveTab('tab','tab-istar')">
+    						☰</a>
+					</div>
+					<div id="istar-system" class="tabcontent">
+					  <h3 id="txt-istar-sys">Cài đặt thông số hệ thống</h3>
+					  <div id="istar-system-content">
+							<label class="lb1" id="txt-devset-max-coltemp">Nhiệt độ tấm tối đa: </label>	
+							<input class="input-type" id="TTmax" type="text" maxlength="3" value=""/><a>°C</a><br>
+							<label class="lb1" id="txt-devset-max-tanktemp">Nhiệt độ bồn tối đa: </label>	
+							<input class="input-type" id="TBmax" type="text" maxlength="3" value=""/><a>°C</a><br>
+							<label class="lb1" id="txt-devset-heater-pow">Công suất điện trở: </label>	
+							<input class="input-type" id="Rcap" type="text" maxlength="3"  value=""/><a> kW</a><br>
+							<label class="lb1" id="txt-devset-tankvol">Thể tích bồn: </label>	
+							<input class="input-type" id="TankVol" type="text" maxlength="4"  value=""/><a>m³</a><br>
+							<label class="lb1" id="txt-devset-tbs">Nhiệt độ mong muốn: </label>	
+							<input class="tooltip input-type" onfocus="theFocus(this);" onblur="theBlur(this);" title="Giá trị nằm trong khoảng ..."  id="TBS" type="text" maxlength="3" value="50"/><a>°C</a><br><br>
+							<div id="tooltip"></div>
+							<div style="display: flex; justify-content: flex-end">	
+								<div><button class="btn btn-set" onclick="ISTARsetDefaultParameters()">Cập nhật</button></div>
+							</div>
+					  </div>
+					</div>
+
+					<div id="istar-conv" class="tabcontent" style="overflow: auto;">
+						<h3 id="txt-istar-conv">Cài đặt thông số bơm đối lưu</h3>
+						<div style="padding-left: 15px;">
+							<label  class="lb-toggle " for="a"><span class="txt-rl-enable">Cho phép hoạt động</span><span class="enable-switch" style=""></span><input class="toggle" type="checkbox" id="enable-rl1"  onclick="div_dis('enable-rl1','conv-content')"/></label>
+						</div>
+						<div id="conv-content">
+						<div class="col-left" id="left-conv">
+							<div class="col-tittle">
+								<input class="radio-btn" id="raito-conv-type1" type="radio" name="raito-conv" onchange="getRating('raito-conv-type1-content','raito-conv-type2-content','raito-conv-type1-content')">
+								<a class= "raito-lb rl-type-1">Theo nhiệt độ</a>
+							</div>
+							<div id="raito-conv-type1-content">
+								<div id="convolution-pump-type1" style="padding-left: 15px;">
+									<label class="lb2" id="turn-on-conv">Δt bật bơm đối lưu: </label>	
+									<input class="input-type" id="CT_ON" type="text" maxlength="3"  value=""/><a>°C</a><br>
+									<label class="lb2" id="turn-off-conv">Δt tắt bơm đối lưu: </label>	
+									<input class="input-type" id="CT_OFF" type="text" maxlength="3"  value=""/><a>°C</a><br>
+								</div>
+							</div>
+						</div>
+						<div class="col-right" style=" ">
+							<div  class="col-tittle">
+								<input class="radio-btn" id="raito-conv-type2" type="radio" name="raito-conv" onchange="getRating('raito-conv-type2-content','raito-conv-type1-content','raito-conv-type2-content')">
+								<a class= "raito-lb rl-type-2">Theo thời gian</a>
+							</div>
+							<div id="raito-conv-type2-content">
+								<div id="convolution-pump-type2" style="padding-left: 15px;">
+									<label class="lb2 pump-time-on">Thời gian bơm chạy: </label>	
+									<input class="input-type" id="C_TIME_ON" type="text" maxlength="3"  value=""/><a class="txt-minute"> phút</a><br>
+									<label class="lb2 pump-time-off">Thời gian bơm tắt: </label>	
+									<input class="input-type" id="C_TIME_OFF" type="text" maxlength="3" value=""/><a class="txt-minute"> phút</a><br>
+								</div>
+							</div>
+						</div>
+						</div>
+						<div class="btn-enable" style="clear: left;">
+							<button class="btn btn-set" onclick="ISTARsetConvPump()">Cập nhật</button>
+						</div>
+					</div>
+
+					<div id="istar-return" class="tabcontent" style="overflow: auto;">
+						<h3 id="txt-istar-return">Cài đặt thông số bơm hồi</h3>
+						<div style="padding-left: 15px;">
+							<label  class="lb-toggle" for="a"><span class="txt-rl-enable">Cho phép hoạt động</span><span class="enable-switch" style=""></span><input class="toggle" type="checkbox" id="enable-rl2" onclick="div_dis('enable-rl2','retun-content')" /></label>
+						</div>
+						<div id="retun-content">
+						<div class="col-left" style=" ">
+							<div class="col-tittle">
+								<input class="radio-btn" type="radio" id="raito-return-type1" name="raito-return" onchange="getRating('raito-return-type1-content','raito-return-type2-content','raito-return-type1-content')">
+								<a class= "raito-lb rl-type-1">Theo nhiệt độ</a>
+							</div>
+							<div id="raito-return-type1-content" style="padding-left: 15px;">
+								<div id="return-pump-type1">
+									<label class="lb2" id="turn-on-return">Δt bật bơm hồi: </label>	
+									<input class="input-type" id="RT_ON" type="text" maxlength="3" value=""/><a>°C</a><br>
+									<label class="lb2" id="turn-off-return">Δt tắt bơm hồi: </label>	
+									<input class="input-type" id="RT_OFF" type="text" maxlength="3" value=""/><a>°C</a><br>
+								</div>
+							</div>
+						</div>
+						<div class="col-right" style=" ">
+							<div  class="col-tittle">
+								<input class="radio-btn" type="radio" id="raito-return-type2" name="raito-return" onchange="getRating('raito-return-type2-content','raito-return-type1-content','raito-return-type2-content')">
+								<a class= "raito-lb rl-type-2">Theo thời gian</a>
+							</div>
+							<div id="raito-return-type2-content" style="padding-left: 15px;">
+								<div id="return-pump-type2">
+									<label class="lb2 pump-time-on">Thời gian bơm chạy: </label>	
+									<input class="input-type" id="R_TIME_ON" type="text" maxlength="3" value=""/><a class="txt-minute"> phút</a><br>
+									<label class="lb2 pump-time-off">Thời gian bơm tắt: </label>	
+									<input class="input-type" id="R_TIME_OFF" type="text" maxlength="3" value=""/><a class="txt-minute"> phút</a><br>
+								</div>
+							</div>
+						</div>
+						</div>
+						<div style="clear: left;"><button class="btn btn-set" onclick="ISTARsetReturnPump()">Cập nhật</button></div>
+					</div>
+					<div id="istar-heater" class="tabcontent" style="overflow: auto;">
+						<h3 id="txt-istar-heater">Cài đặt thông số trở gia nhiệt</h3>
+						<div style="padding-left: 15px;">
+							<label  class="lb-toggle" for="a"><span class="txt-rl-enable">Cho phép hoạt động</span><span class="enable-switch" style=""></span><input class="toggle" type="checkbox" id="enable-rl3" onclick="div_dis('enable-rl3','heater-content')"/></label>
+						</div>
+						<div id="heater-content">
+						<div class="col-left" style=" ">
+							<div class="col-tittle">
+								<a class= "raito-lb rl-type-1" style="padding-left: 15px;">Theo nhiệt độ</a>
+							</div>
+							<div id="div-content-rl3" style="padding-left: 15px;">
+								<label>Δt bật trở gia nhiệt: </label>	
+								<input class="input-type" id="HT_ON" type="text" maxlength="3" value=""/><a>°C</a><br>
+							</div>
+						</div>
+
+						</div>
+						<div style=" clear: left;"><button class="btn btn-set" onclick="ISTARsetHeater()">Cập nhật</button></div>
+					</div>
+					<div id="istar-sche" class="tabcontent">
+					  	<h3 id="txt-istar-schedule">Cài đặt lịch thời gian</h3>
+					  	<div style=" clear: left;">
+					  		<label >Các khoảng thời gian mong muốn: </label>
+					  		<button class="btn btn-add" onclick="addSlotTime('ISTAR')">Thêm</button>
+					  	</div>
+					  	<div>
+							<div id='istar-slot-time'>
+								<span id="istar-slot-time-" style="visibility: hidden; display: none;">
+									<label class="txt-from">Từ </label>
+									<input class="input-type" type="text" maxlength="2"/><label> :</label>
+									<input class="input-type" type="text" maxlength="2"/> <label class="txt-to"> đến</label>
+									<input class="input-type" type="text" maxlength="2"/><label> :</label>
+									<input class="input-type" type="text" maxlength="2"/>
+									<button class="btn btn-delete" onclick="deleteSlotTime('ISTAR')">Xóa</button><br>
+								</span>
+							</div>
+					  	</div>
+					<div>
+						<button class="btn btn-set" onclick="ISTARsetTime()">Cập nhật</button>
+					</div>
+					</div>
+					</div>
+					<div id="other-content">
+						<h3 id="txt-other-app">Cài đặt ứng dụng khác</h3>
+						<div class="tab1" id="tab-istar" style="border-radius: 7px;">
+						  <button class="tablinks" onclick="tabState(event, 'diff-auto')" id="btn-other-auto" style="width: 50%; height: 35px; padding: 0px;">AUTO</button>
+						  <button class="tablinks" onclick="tabState(event, 'diff-manu')" id="btn-other-manu" style="width: 50%; height: 35px; padding: 0px;">MANUAL</button>
+						</div>
+						<div id="diff-auto" class="tabcontent">
+						<div id="collapsible-rl0">
+						<div>
+							<button class="collapsible"  onclick="return toggleMe('colapse-relay0')" >RELAY 1 (1500W)</button>
+						</div>
+						<div class="colapse-relay" id="colapse-relay0" style="display: none;">  
+							<label class="status-label" id="txt-other-schedule">Các khoảng thời gian mong muốn: </label>
+							<button class="btn btn-add" onclick="addSlotTime(0)">Thêm</button>
+							<div id="other-relay0">
+								<span class="other-slot" id="other-rl0-slot-" style="visibility: hidden; display: none;">
+									<label class="txt-from">Từ </label>
+									<input class="input-type" id="" type="text" maxlength="2"/><label> :</label>
+									<input class="input-type" id="" type="text" maxlength="2"/> <label id="txt-to"> đến</label>
+									<input class="input-type" id="" type="text" maxlength="2"/><label> :</label>
+									<input class="input-type" id="" type="text" maxlength="2"/>
+								    <select  class="input-type other-select" id="other-rl0-select-" onchange="other_select_type('other-rl0-select-','other-rl0-element-')" style="width: 200px;">
+								        <option value="2" class="sel-on-off">BẬT TẮT LUÔN PHIÊN</option>
+								        <option value="3" class="sel-on" selected>LUÔN BẬT</option>
+								        <option value="4" class="sel-cond">BẬT TẮT THEO ĐIỀU KIỆN</option>
+								    </select>
+								    <button class="btn btn-delete" onclick="deleteSlotTime(0)">Xóa</button><br>
+								    <div class="other-option" id="1">
+								    	<div id="mode-2">
+											<label>Bật: </label>
+											<input class="input-type" id="" type="text" maxlength="2"/>
+											<label>Tắt: </label>
+											<input class="input-type" id="" type="text" maxlength="2"/> 
+								    	</div>
+								    	<div id="mode-4">
+								    		<input class="input-type" type="" style="width: 200px;">
+								    		<button class="btn" id="">Compile</button>
+								    	</div>
+								    </div>
+								</span>
+							</div>
+							<button class="btn btn-set" onclick="OTHERsetData(0)">Cập nhật</button>
+						</div>
+						</div>
+						</div>
+						<div id="diff-manu" class="tabcontent">
+						  	<div>
+						<label  class="lb-toggle" for="a"><span class="spanx">RELAY 1 (1500W):</span><input class="toggle" type="checkbox" id="manual-rl1" /></label>
+						<label  class="lb-toggle" for="a"><span class="spanx">RELAY 2 (300W):</span><input class="toggle" type="checkbox" id="manual-rl2" /></label>
+						<label  class="lb-toggle" for="a"><span class="spanx">RELAY 3 (300W):</span><input class="toggle" type="checkbox" id="manual-rl3" /></label>
+						<div>
+							<button class="btn btn-set" onclick="other_setManual()">Cập nhật</button>
+						</div>
+						  	</div>
+						</div>
+					</div>
+				</div>
+				<div class="navcontent" id="status-tab">
+					<h3>Thông tin hệ thống</h3>
+					<div class="col-left" style="margin-top: 10px;">
+						<h3>Trạng thái thiết bị</h3>
+						<div class="status-content" id="status-sys">
+							<span>Phiên bản phần mềm: </span><span style="padding-left: 10px;">dsdsds</span><br>
+							<span>Thời gian hiện tại trên thiết bị: </span><span style="padding-left: 10px;">dsdsds</span><br>
+							<span>Số giờ hoạt động: </span><span style="padding-left: 10px;">sdsd</span><br>
+							<span>Số lần reset: </span><span style="padding-left: 10px;">dsds</span><br>
+						</div>
+						<h3>Trạng thái kết nối</h3>
+						<div class="status-content" id="status-connect">
+							<span>Kết nối Wifi: </span><span style="padding-left: 5px;"></span>
+							<span> Tín hiệu: </span><span style="padding-left: 5px;"></span><br>
+							<span>Kết nối MQTT: </span><span style="padding-left: 5px;"></span><br>
+						</div>
+						<h3>Nhiệt độ cảm biến</h3>
+						<div class="status-content"  id="status-adc">
+							<span>Nhiệt độ cảm biến 1: </span><span style="padding-left: 10px;"></span><br>
+							<span>Nhiệt độ cảm biến 2: </span><span style="padding-left: 10px;"></span><br>
+							<span>Nhiệt độ cảm biến 3: </span><span style="padding-left: 10px;"></span><br>
+						</div>
+					</div>
+					<div class="col-right" style="margin-top: 10px;">
+						<h3>Trạng thái hoạt động Relay</h3>
+						<div class="status-content">
+							<span>Relay 1:</span><span></span><br>
+							<span>Số giờ hoạt động trong ngày:</span><span></span><br>
+							<hr style="width: 100%;">
+							<span>Relay 2:</span><span></span><br>
+							<span>Số giờ hoạt động trong ngày:</span><span></span><br>
+							<hr style="width: 100%;">
+							<span>Số giờ hoạt động trong ngày:</span><span></span><br>
+						</div>
+					</div>
+				</div>
+				<div class="navcontent" id="admin-tab" style=" padding: 10px;">
+					<div class="update-content" style="width: 380px; float:  left;">
+						<h3>OTA Webserver</h3>
+						<div style="position: relative;">
+							<input  class="input-type" id="uploadFile" style="width: 200px; position: relative; left: 0px;" placeholder="Choose File" readonly/>
+							<label id="lb-upload" style="position: absolute; right: 0;">Choose file<input id="uploadBtn" type="file" class="upload" /></label>
+							<div style="margin-top: 10px;">
+								<button class="btn"  onclick="ota_update('uploadBtn')">Update</button>
+							</div>
+							<div>
+								<br>
+								<div id='prg'></div>
+								<div id='prgbar'>
+									<div id='bar'></div>
+								</div>
+							</div>
+						</div>
+						<h3>OTA HTTP</h3>
+						<div id="ota-http">
+							<button class="btn" id="check-ota" onclick="checkFirrmware()">Check</button>
+							<div id="list-firmware" style="margin-top: 10px;">
+								<table id="table-firmware">
+									<tbody id="TBL-FIRM">
+										<tr><th>SSID</th><th>RSSID</th></tr>
+										<col width="40%">
+		  								<col width="30%">
+									</tbody>
+								</table>
+
+							</div>
+							<div style="margin-top:  15px;">
+								<input class="input-type" id="txtFirmware" type="text" style="width: 230px;" placeholder="Firmware">
+								<button class="btn" id="" onclick="FirmwareUpdate()">Execute</button>
+							</div>
+						</div>
+						<h3>Device checking</h3>
+						<div id="checking-device">
+							<span>RTC PCF8563: </span><span style="padding-left: 10px;">dsdsds</span><br>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="sidenav nav hdsd" id="nav-hdsd">
+				<div>
+					<a href="javascript:void(0)" class="closebtn" style="font-size: 18px;">Hướng dẫn nhanh</a>
+				</div>
+				<div>
+					<div class="hdsd-content" id="hdsd-hardware-test">
+						hardware test
+					</div>
+					<div class="hdsd-content" id="hdsd-serial-setting">
+						<p>CÀI ĐẶT THỜI GIAN:<br>
+						Nhập thông tin thời gian hiện tại.<br>
+						Chọn <b>"Cập nhật"</b> để cập nhật thời gian cho thiết bị.</p>
+						<p>CÀI ĐẶT SỐ SERIAL:<br>
+						Nhập số Serial Number muốn cập nhật.<br>
+						Chọn <b>"Cập nhật"</b> để cập nhật số Serial mới.</p>
+					</div>
+					<div class="hdsd-content" id="hdsd-connection-setting">
+						<div class="hdsd-connection" id="hdsd-tab-wifi">
+							<div class="hdsd-vi">
+								<p>CÀI ĐẶT WIFI</p>
+								<p>‒ Chọn <b>"Quét"</b> để quét các mạng Wi-Fi sẵn có xung quanh.<br>
+								Chọn mạng Wi-Fi (SSID) mong muốn kết nối tới.<br>
+								Nhập "PASSWORD" của mạng Wi-Fi đã chọn.<br>
+								‒ Chọn <b>"Kết nối"</b> để thiết bị bắt đầu kết nối tới Wi-Fi đã chọn.<br>
+								Lưu ý: Chỉ nên sử dụng các mạng Wi-Fi có cường độ (RSSI) lớn hơn 30%.<br></p>
+							</div>
+							<div class="hdsd-en">
+								<p>WIFI SETTING</p>
+		 						 <p>‒ Choose <b>"Scan"</b> to scan around available Wi-Fi stations<br>
+								 Choose expected Wi-Fi station (SSID) to connect to.<br>
+								 Enter "PASSWORD" of chosen Wi-Fi station<br>
+								 ‒ Choose <b>"Connect"</b> to start connecting to chosen Wi-Fi station.<br>
+								 Notice: The chosen Wi-Fi station should not be less than 30%.</p>
+							</div>
+						</div>
+						<div class="hdsd-connection" id="hdsd-tab-rs485">
+							<div class="hdsd-vi">
+								<p>CÀI ĐẶT RS485</p>
+								<p>‒ Slave:<br>
+								Nhập địa chỉ Modbus ID của thiết bị vào ô "Slave ID".<br>
+								‒ Master:<br> 
+								Chọn loại thiết bị muốn giao tiếp.<br>
+								Nhập Modbus ID vào ô "ID".<br>
+								Chọn <b>"Thêm"</b> để thêm thiết bị vào danh sách.<br>
+								Lưu ý: Địa chỉ trên thiết bị Master và Slave phải trùng khớp nhau.</p>
+							</div>
+							<div class="hdsd-en">
+								<p>RS485 SETTING</p>
+								<p>‒ Slave:<br>
+								Enter Modbus Address into "Slave ID".<br>
+								‒ Master:<br> 
+								 Choose expected communicating device.<br>
+								 Enter Modbus Address into "ID"<br>
+								 Click <b>"Add"</b> to add device into below list.<br>
+								 Notice: The Master and Slave Address must be the same.</p>
+							</div>
+						</div>
+						<div class="hdsd-connection" id="hdsd-tab-mqtt">
+							mqtt
+						</div>
+					</div>
+					<div class="hdsd-content" id="hdsd-device-setting">
+						<div id="hdsd-istar">
+							<div class="hdsd-istar" id="hdsd-istar-system">
+								<p>‒ Nhiệt độ tấm tối đa: cài đặt nhiệt độ tấm tối đa để bảo vệ tấm Collect và bơm đối lưu. Nên cài đặt trong khoảng 80-100 °C.</p>
+								<p>‒ Nhiệt độ bồn tối đa: cài đặt nhiệt độ bồn tối đa để bảo vệ hệ thống. Nên cài đặt trong khoảng 80‒100 °C.</p>
+								<p>‒ Cảnh báo thông minh: chế độ cảnh báo thông minh thời gian hoạt động của điện trở dựa trên công suất hệ thống.<br>
+								  + Nhập <b>"Công suất điện trở"</b> đang sử dụng. Đơn vị tính kilowatt (kw).<br>
+								  + Nhập <b>"Thể tích bồn"</b> đang sử dụng. Đơn vị tính m3 (x1000L).</p>
+								<p>‒ Nhiệt độ mong muốn: nhiệt độ nước nóng mong muốn duy trì trong hệ thống. Nên cài đặt trong khoảng 45‒55 °C.</p>
+							</div>
+							<div class="hdsd-istar" id="hdsd-istar-conv">
+								<p>‒ Chọn <b>"Cho phép hoạt động"</b> để kích hoạt sử dụng bơm đối lưu. Lưu ý: tắt nếu không sử dụng</p>
+								<p>‒ Chế độ hoạt động bơm đối lưu:</p>
+									<p>+ Theo nhiệt độ: bơm đối lưu sẽ hoạt động dựa trên nhiệt độ chênh lệch giữa tấm Collector và bồn Solar. Lưu ý: lắp cảm biến nhiệt độ để sử dụng chế độ này</p>
+									<p>+ Theo thời gian: bơm đối lưu sẽ hoạt động theo thời gian cài đặt.</p>
+							</div>
+							<div class="hdsd-istar" id="hdsd-istar-return">
+								<p>‒ Chọn <b>"Cho phép hoạt động"</b> để kích hoạt sử dụng bơm hồi. Lưu ý: tắt nếu không sử dụng<br> 
+								<p>‒ Chế độ hoạt động bơm hồi:</p>
+									<p>+ Theo nhiệt độ: bơm hồi sẽ hoạt động dựa trên nhiệt độ chênh lệch giữa đường nước hồi và bồn Solar. <br>
+									Lưu ý: lắp cảm biến nhiệt độ để sử dụng chế độ này</p>
+									<p>+ Theo thời gian: bơm hồi sẽ hoạt động theo thời gian cài đặt</p>
+							</div>
+							<div class="hdsd-istar" id="hdsd-istar-heater">
+								<p>‒ Chọn <b>"Cho phép hoạt động"</b> để kích hoạt sử dụng điện trở gia nhiệt. Lưu ý: tắt nếu không sử dụng</p>
+								<p>‒ Chế độ hoạt động điện trở gia nhiệt:<br>
+									+ Theo nhiệt độ: điện trở gia nhiệt sẽ hoạt động dựa trên nhiệt độ chênh lệch giữa bồn Solar và nhiệt độ mong muốn của hệ thống. <br>
+									Lưu ý: lắp cảm biến nhiệt độ để sử dụng chế độ này<br>
+									+ Nên cài đặt trong khoảng 50-60 °C để tiết kiệm năng lượng hoạt động của hệ thống</p>
+							</div>
+							<div class="hdsd-istar" id="hdsd-istar-sche">
+								<p>‒ Cài đặt các khoảng thời gian hoạt động của hệ thống:</p>
+									<p>+ Chọn <b>"Thêm"</b> để thêm khoảng thời gian hoạt động trong ngày (tối đa 05 khoảng thời gian được cài đặt)</p>
+									<p>+ Nhập thời gian mong muốn hoạt động hệ thống và chọn <b>"Cập nhật"</b> để lưu các giá trị cài đặt</p>
+							</div>
+						</div>
+						<div id="hdsd-other">
+							<p>Ứng dụng khác</p>
+								<p>‒ AUTO:<br>
+									<p>+ Chọn <b>"Thêm"</b> để thêm khoảng thời gian bật/tắt relay (tối đa 05 khoảng cho mỗi relay)</p>
+									<p>+ Nhập thời gian mong muốn hoạt động của relay và chọn <b>"Cập nhật"</b> để lưu các giá trị cài đặt</p>
+									<p>+ Lưu ý: chọn relay có công suất phù hợp với ứng dụng tải đang sử dụng thực tế để tránh làm hỏng relay.</p>
+								<p>‒ MANUAL: Bật/tắt relay bằng tay.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<button class="btn" id="open-hdsd" onclick="openHDSD()">▷</button>
+	</div>
+	<div id="modalBox" class="modal">
+	  <div class="modal-content">
+	    <span style="top:10px; right: 15px; position: absolute; font-size: 28px;" onclick="close_modal()">✖</span>
+	  </div>
+
+	</div>
+	</div>
+</body>
+<script  type="text/javascript" src="main.js">
+</script>
+</html>
