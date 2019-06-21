@@ -222,7 +222,19 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
           }
         }
         else if(root.containsKey("UPDATE_FIRMWARE")){
-
+          Serial.println("----ota-----");
+          t_httpUpdate_return ret = box.ota(root["UPDATE_FIRMWARE"]);
+          switch (ret) {
+            case HTTP_UPDATE_FAILED:
+              Serial.printf("HTTP_UPDATE_FAILED Error (%d): %s\n", httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
+              break;
+            case HTTP_UPDATE_NO_UPDATES:
+              Serial.println("HTTP_UPDATE_NO_UPDATES");
+              break;
+            case HTTP_UPDATE_OK:
+              Serial.println("HTTP_UPDATE_OK");
+              break;
+          }
         }
         webSocket.broadcastTXT("message here");
       } break;
@@ -309,7 +321,7 @@ void serviceEvent(){
           storage.NVS_GetString("WIFI", "PASS", cpass, sizeof(cpass));
           WiFi.disconnect();
           IS_WIFI_SETTING = true;
-          IS_STA_NO_AP = true;
+          IS_STA_NO_AP = false;
           response = "update";
           server.send(200, "text/plain", response);
       }break;

@@ -71,6 +71,9 @@ char rootca[2048];
 char certificate[2048];
 char private_key[2048];
 
+dropbox box;          // dropbox ota
+
+
 WiFiClientSecure httpsClient;
 PubSubClient mqttClient(httpsClient);
 

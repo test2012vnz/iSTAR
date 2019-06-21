@@ -105,7 +105,8 @@ tm PCF8563::setTime(byte day, byte month, byte year, byte weekday,  byte hour, b
     Wire.write(decToBcd(year));        //set year to 99
     Wire.endTransmission();
     // Keep values in-sync with device
-     // return get();
+    vTaskDelay(50);
+     return get();
 }
 
 tm PCF8563::setTime(tm t){
