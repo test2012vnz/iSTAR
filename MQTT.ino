@@ -4,28 +4,12 @@ void MQTT_TASK() {
   String cert = SPIFFS_readFile("/CERTIFICATE.txt");
   String pri = SPIFFS_readFile("/PRIVATEKEY.txt");
   
-  // Serial.println(root.length());
-  // Serial.println(cert.length());
-  // Serial.println(pri.length());
-
-  // memset(rootca,0,sizeof(rootca));
-  // memset(certificate,0,sizeof(certificate));
-  // memset(private_key,0,sizeof(private_key));
-  // memcpy(rootca, root.c_str(), root.length());
-  // memcpy(certificate, cert.c_str(), cert.length());
-  // memcpy(private_key,pri.c_str(),pri.length());
-
-  // Serial.println(String(rootca));
-  // Serial.println(String(certificate));
-  // Serial.println(String(private_key));
-
   httpsClient.setCACert(root.c_str());
   httpsClient.setCertificate(cert.c_str());
   httpsClient.setPrivateKey(pri.c_str());
   mqttClient.setServer(endpoint, 8883);
   mqttClient.setCallback(MQTT_callback);
   String send_pkg="";
-
   int tick = 0;
   for (;;) {
     // Serial.println("Free heap->"+String(ESP.getFrseeHeap()));
@@ -58,6 +42,8 @@ void MQTT_TASK() {
       CON_Status = iCON_Wifi_Fail;
       if(!IS_STA_NO_AP)
         Wifi_Init();
+      // if(WiFi.status() == WL_CONNECTED)
+      //   RTC_Init();
       vTaskDelay(6000);
     }
     vTaskDelay(1000);
@@ -91,11 +77,8 @@ void connectAWSIoT() {
       Serial.println("Subscribed.");
       CON_Status = iCON_OK;
   } else {
-      Serial.print("Failed. Error state=");
-      Serial.print(mqttClient.state());
-       Serial.print("\n");
-      // Wait 5 seconds before retrying
-      vTaskDelay(5000);
+      Serial.println("Failed. Error state="+String(mqttClient.state()));
+      vTaskDelay(20000);
   }
 }
 

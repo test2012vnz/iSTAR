@@ -27,7 +27,7 @@ bool RTC::setTime(int h, int m, int s, int d, int M, int Y)
 }
 
 bool RTC::setTime(tm tm)
-{  
+{   
     time_t t = mktime(&tm);
     struct timeval now = {.tv_sec = t};
     Serial.println(String(tm.tm_hour)+":.."+String(tm.tm_min)+":.."+String(tm.tm_sec));

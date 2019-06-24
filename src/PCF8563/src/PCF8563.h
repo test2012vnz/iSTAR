@@ -32,7 +32,7 @@
 
 /* setting the alarm flag to 0 enables the alarm.
  * set it to 1 to disable the alarm for that value.
- */
+*/
 #define RTCC_ALARM          0x80
 #define RTCC_ALARM_AIE      0x02
 #define RTCC_ALARM_AF       0x08
@@ -87,10 +87,10 @@ class PCF8563 {
     public:
     PCF8563(int sda, int scl);
 
-    void zeroClock();  /* Zero date/time, alarm / timer, default clkout */
-    void clearStatus(); /* set both status bytes to zero */
+    void zeroClock();           /* Zero date/time, alarm / timer, default clkout */
+    void clearStatus();         /* set both status bytes to zero */
     byte readStatus2();
-    void clearVoltLow(void); /* Only clearing is possible */
+    void clearVoltLow(void);    /* Only clearing is possible */
 
     tm get();     /* get date and time vals to local vars */
     tm setTime(byte day, byte month, byte year, byte weekday,  byte hour, byte minute, byte sec);
@@ -99,6 +99,8 @@ class PCF8563 {
     // Sets date/time to static fixed values, disable all alarms
     // use zeroClock() above to guarantee lowest possible values instead.
     void initClock();
+    uint8_t read(uint8_t address);
+    void write(uint8_t address, uint8_t data);
     // Slightly unsafe, don't use for new code, use above instead!
     void setTime(byte hour, byte minute, byte sec);
     void getTime();  // unsafe, don't use

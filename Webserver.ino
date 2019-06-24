@@ -88,23 +88,22 @@ String response_OTHER(){
   return js;
 }
 void Webserver_Init(){
-  // WiFi.mode(WIFI_AP_STA);
   WiFi.onEvent(WiFiEvent);
   Serial.println("WIFI MODE->"+String(WiFi.getMode()));
   WiFi.disconnect(true);                     // disconnects STA Mode
   vTaskDelay(1000);
   WiFi.softAPdisconnect(true);           // disconnects AP Mode 
   vTaskDelay(1000);  
-  // WiFi.enableAP(1);
 
   if((char *)SERIAL_NUMBER!="")
-    WiFi.softAP((char *)SERIAL_NUMBER, "12345678", 5);
+    WiFi.softAP((char *)SERIAL_NUMBER, "12345678");
   else{
-    WiFi.softAP("iSTAR", "12345678",5);
+    WiFi.softAP("iSTAR", "12345678");
   }
+
   Serial.print("IP address: ");
   Serial.println(WiFi.softAPIP());
-
+  WiFi.softAPsetHostname("esp32");
   server.on("/", HTTP_GET, [](){
     if(currentuser){
         if(!handleFileRead("/main.html")) server.send(404, "text/plain", "FileNotFound");
@@ -338,7 +337,8 @@ void serviceEvent(){
         int y = root["YEAR"].as<int>();
         Serial.println("sv->"+String(hh)+":"+String(mm)+":"+String(sec));
         Serial.println("sv->"+String(day)+"/"+String(mon)+"/"+String(y));
-        ext_rtc.setTime((byte)day, (byte)mon, (byte)(y%100), (byte)wday, (byte)hh, (byte)mm, (byte)sec);
+        ext_rtc.setTime(day, mon, (y%100), wday, hh, mm, sec);
+        ext_rtc.setTime(day, mon, (y%100), wday, hh, mm, sec);
         // ext_rtc.setTime(day, mon, y%100, wday, hh, mm, sec);
         // for (int i = 0; i < 3; i++) {
         //   vTaskDelay(20);
@@ -725,7 +725,7 @@ bool handleFileRead(String path){
 
 String create_socket_json(){
   String js="{\"TIME\":" + String(SYSTEM_TIME) + ",\"";
-  js+="PCF8563\":" + String(ext_rtc.getSecondInDay()) + ",\"";
+  js+="PCF8563\":" + String(0) + ",\"";    //ext_rtc.getSecondInDay()
   js+="TEST_MODE\":" + String(IS_DURING_TEST_MODE) + ",\"";
   js+="LIVE_TIME\":" + String(Live_time) + ",\"";
   js+="RESET_COUNT\":" + String(Reset_count) + ",\"";

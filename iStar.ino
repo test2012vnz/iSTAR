@@ -29,7 +29,7 @@ void loop() {
 
 void control_Task(void *pvParameters) {
   RTC_Init();
-  vTaskDelay(3000);
+  vTaskDelay(7000);
   for (;;) {
     if (rtc.check() == true) {
       SYSTEM_TIME = rtc.getSecondInDay();
@@ -69,7 +69,7 @@ void control_Task(void *pvParameters) {
 
 void MQTT_Task(void *pvParameters) {
   WiFi.setAutoReconnect(0);
-  vTaskDelay(2000);
+  vTaskDelay(1000);
   Wifi_Init();
   MQTT_TASK();
 }

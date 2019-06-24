@@ -21,7 +21,7 @@ byte PCF8563::bcdToDec(byte val)
 
 void PCF8563::zeroClock()
 {
-    vTaskDelay(10);
+    vTaskDelay(20);
     Wire.beginTransmission(PCF8563_ADDR);    // Issue I2C start signal
     Wire.write((byte)0x0);        // start address
 
@@ -53,13 +53,14 @@ void PCF8563::clearStatus()
 }
 
 tm PCF8563::get(void){
+    vTaskDelay(50);
     Wire.beginTransmission(PCF8563_ADDR);
     Wire.write((byte)RTCC_STAT1_ADDR);
     Wire.endTransmission();
     /* As per data sheet, have to read everything all in one operation */
     uint8_t readBuffer[16] = {0};
-    Wire.requestFrom(PCF8563_ADDR,  16);
-    for (int  i=0; i < 16; i++)
+    Wire.requestFrom(PCF8563_ADDR,  9);
+    for (int  i=0; i < 9; i++)
         readBuffer[i] = Wire.read();
 
     // status bytes
@@ -72,7 +73,6 @@ tm PCF8563::get(void){
     //0x3f = 0b00111111
     DateTime.tm_hour = bcdToDec(readBuffer[4] & 0x3f);
 
-    // date bytes
     //0x3f = 0b00111111
     DateTime.tm_mday = bcdToDec(readBuffer[5] & 0x3f);
     //0x07 = 0b00000111
@@ -80,7 +80,6 @@ tm PCF8563::get(void){
     //get raw month data byte and set month and century with it.
     DateTime.tm_mon = bcdToDec(readBuffer[7] & 0x1f) -1;
     DateTime.tm_year = bcdToDec(readBuffer[8])+100;
-
     return DateTime;
 }
 
@@ -89,8 +88,11 @@ tm PCF8563::setTime(byte day, byte month, byte year, byte weekday,  byte hour, b
         with the highest bit of month = century
         0=20xx
         1=19xx
-        */
-    // initClock();
+    */
+    initClock();
+    vTaskDelay(50);
+    // zeroClock();
+    
     month = decToBcd(month);
     month &= ~RTCC_CENTURY_MASK;
     /* As per data sheet, have to set everything all in one operation */
@@ -104,9 +106,8 @@ tm PCF8563::setTime(byte day, byte month, byte year, byte weekday,  byte hour, b
     Wire.write(month);                 //set month, century to 1
     Wire.write(decToBcd(year));        //set year to 99
     Wire.endTransmission();
-    // Keep values in-sync with device
-    vTaskDelay(50);
-     return get();
+
+    return get();
 }
 
 tm PCF8563::setTime(tm t){
@@ -114,6 +115,7 @@ tm PCF8563::setTime(tm t){
 }
 
 void PCF8563::initClock(){
+    vTaskDelay(50);
     Wire.beginTransmission(PCF8563_ADDR);    // Issue I2C start signal
     Wire.write((byte)0x0);        // start address
 
@@ -139,11 +141,11 @@ bool PCF8563::check(){
 }
 
 bool PCF8563::check(tm t){
-    Serial.println("ext rtc->"+String(DateTime.tm_hour)+":"+String(DateTime.tm_min)+":"+String(DateTime.tm_sec));
-    Serial.println("ext rtc->"+String(DateTime.tm_mday)+"/"+String(DateTime.tm_mon)+"/"+String(DateTime.tm_year));
-    if(DateTime.tm_hour>=24|| DateTime.tm_min>=60)
+    Serial.println("ext rtc->"+String(t.tm_hour)+":"+String(t.tm_min)+":"+String(t.tm_sec));
+    Serial.println("ext rtc->"+String(t.tm_mday)+"/"+String(t.tm_mon)+"/"+String(t.tm_year));
+    if(t.tm_hour>=24|| t.tm_min>=60)
         return false;
-    if(DateTime.tm_year + 100 > (2016 - 1900))
+    if(t.tm_year + 100 > (2016 - 1900))
     {
         return true;
     }

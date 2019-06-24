@@ -200,6 +200,7 @@ void Timer_Init() {
   xTaskCreatePinnedToCore(MQTT_Task, "MQTT TASK", 8196, NULL, 9, NULL, 1); 
   xTaskCreatePinnedToCore(Sensor_Task, "Sensor Task", 1024, NULL, 9, NULL, 1); 
   xTaskCreate(RS485_Task, "RS485 Task", 4096, NULL, 8, NULL);
+  
 }
 
 void Wifi_Init() {
@@ -242,11 +243,10 @@ INT_SYNS:
   if (ext_rtc.check() == true) {
     FAIL_STATUS &= ~EXT_RTC_ERROR;
     rtc.setTime(ext_rtc.get());
-    // for (int i = 0; i < 3; i++) {
-     
-    //   if (rtc.check() == true)
-    //     return ;
-    // }
+    for (int i = 0; i < 3; i++) {
+      if (rtc.check() == true)
+        return ;
+    }
   } else FAIL_STATUS |= EXT_RTC_ERROR;
   return;
 
