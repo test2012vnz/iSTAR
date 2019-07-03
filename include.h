@@ -4,12 +4,12 @@
 #include <WiFiClientSecure.h>
 #include <WebSocketsServer.h>
 #include <WebServer.h>
-#include <Update.h>
+// #include <Update.h>
 #include <SPIFFS.h>
 #include <EEPROM.h>
 // #include <WebSocketsClient.h>
 
-// #include <AWS_IOT.h>
+#include "src/Update/src/Update.h"
 #include <ArduinoJson.h>
 #include "json_device.h"
 #include "src/wifi/src/wifi.h"
@@ -38,6 +38,8 @@ typedef enum {
 } USER;
 USER currentuser = Non_USER;
 
+Updater OTAUpdate;
+
 /*****************SYSTEM******************/
 uint32_t SYSTEM_TIME;
 char FW_VERSION[64] = "iSTAR-v20191706"; 
@@ -53,18 +55,21 @@ String iStar_pkg="";  // packet collection
 
 bool RS485_pkg_ready = false;
 _Wifi wifi_(&WiFi);
+HTTPClient http;
 char cssid[64];
 char cpass[64];
 bool IS_WIFI_SETTING=false;
 bool IS_WIFI_SCANNING = false;
 bool IS_STA_NO_AP = false;
+int wifi_reconnect_count = 0;
 
+const char Bearer[] = "P2J36BpEat4AAAAAAAAAKQYx0i4sfguQiRc9B3xrkpsuF9rfUdKrIydiaoAztrHH";
 const char endpoint[] = "a2lv3cywt6s2d5-ats.iot.ap-northeast-1.amazonaws.com";
-const int port = 8883;
+const int MQTTport = 8883;
 
 // AWS_IOT *aws = new AWS_IOT;
-char HOST_ADDRESS[]="a2lv3cywt6s2d5-ats.iot.ap-northeast-1.amazonaws.com";
-char CLIENT_ID[]= "RD-TEST";
+// char HOST_ADDRESS[]="a2lv3cywt6s2d5-ats.iot.ap-northeast-1.amazonaws.com";
+// char CLIENT_ID[]= "RD-TEST";
 char pubTopic[] = "data/iStar";
 char subTopic[] = "$aws/things/iStar/shadow/update/delta";
 char rootca[2048];
@@ -154,6 +159,7 @@ iCON_Status CON_Status;
 typedef enum{
   iRUN_Null=0,
   iRUN_OK,
+  iRUN_FAIL_TIME,
   iRUN_FAIL
 }iRUN_Status;
 iRUN_Status RUN_Status;
@@ -215,7 +221,6 @@ void IRAM_ATTR onTimer();
 int HEATER_TIME_MAX_RUN = 0;
 int HEATER_START_TIME = 0;
 
-
 /* Partition:
   # Name,   Type, SubType, Offset,  Size, Flags
   nvs,      data, nvs,     0x9000,  0x3000,
@@ -225,6 +230,18 @@ int HEATER_START_TIME = 0;
   app1,     app,  ota_1,   0x150000,0x140000,
   eeprom,   data, 0x99,    0x290000,0x10000,
   spiffs,   data, spiffs,  0x2A0000,0x160000,
+*/
+
+/* Partition Test Factory
+  # Name,   Type, SubType, Offset,  Size, Flags
+  nvs,      data, nvs,     0x9000,  0x3000,
+  phy_init, data, phy,     0xc000,  0x2000,
+  otadata,  data, ota,     0xe000,  0x2000,
+  factory,  app,  factory, 0x10000, 0x100000,
+  app0,     app,  ota_0,   0x110000,0x100000,
+  app1,     app,  ota_1,   0x210000,0x100000,
+  eeprom,   data, 0x99,    0x310000,0x10000,
+  spiffs,   data, spiffs,  0x320000,0x50000,
 */
 
 #endif

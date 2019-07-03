@@ -90,20 +90,22 @@ String response_OTHER(){
 void Webserver_Init(){
   WiFi.onEvent(WiFiEvent);
   Serial.println("WIFI MODE->"+String(WiFi.getMode()));
+  WiFi.mode(WIFI_AP_STA);
   WiFi.disconnect(true);                     // disconnects STA Mode
   vTaskDelay(1000);
   WiFi.softAPdisconnect(true);           // disconnects AP Mode 
   vTaskDelay(1000);  
 
-  if((char *)SERIAL_NUMBER!="")
-    WiFi.softAP((char *)SERIAL_NUMBER, "12345678");
+  if(String(SERIAL_NUMBER)!="")
+    WiFi.softAP(SERIAL_NUMBER, "12345678");
   else{
-    WiFi.softAP("iSTAR", "12345678");
+    WiFi.softAP("iSTAR new device", "12345678");
   }
 
   Serial.print("IP address: ");
   Serial.println(WiFi.softAPIP());
-  WiFi.softAPsetHostname("esp32");
+  // WiFi.softAPsetHostname("esp32");
+
   server.on("/", HTTP_GET, [](){
     if(currentuser){
         if(!handleFileRead("/main.html")) server.send(404, "text/plain", "FileNotFound");
@@ -119,30 +121,29 @@ void Webserver_Init(){
   });
 
   server.on("/c", serviceEvent);
-  server.on("/ota", serviceOta);
   server.on("/update", HTTP_POST, []() {
     Serial.println("OKOKOKKOK");
     server.sendHeader("Connection", "close");
-    server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+    server.send(200, "text/plain", (OTAUpdate.hasError()) ? "FAIL" : "OK");
     ESP.restart();
   }, []() {
     HTTPUpload& upload = server.upload();
     if (upload.status == UPLOAD_FILE_START) {
       Serial.setDebugOutput(true);
       Serial.printf("Update: %s\n", upload.filename.c_str());
-      if (!Update.begin()) { //start with max available size
-        Update.printError(Serial);
+      if (!OTAUpdate.begin()) { //start with max available size
+        OTAUpdate.printError(Serial);
       }
     } else if (upload.status == UPLOAD_FILE_WRITE) {
-      if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
-        Update.printError(Serial);
+      if (OTAUpdate.write(upload.buf, upload.currentSize) != upload.currentSize) {
+        OTAUpdate.printError(Serial);
       }
     } else if (upload.status == UPLOAD_FILE_END) {
-      if (Update.end(true)) { //true to set the size to the current progress
+      if (OTAUpdate.end(true)) { //true to set the size to the current progress
         Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
-        server.send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+        server.send(200, "text/plain", (OTAUpdate.hasError()) ? "FAIL" : "OK");
       } else {
-        Update.printError(Serial);
+        OTAUpdate.printError(Serial);
       }
       Serial.setDebugOutput(false);
     }
@@ -164,9 +165,6 @@ void WiFiEvent(WiFiEvent_t event, WiFiEventInfo_t info)
   }
 }
 
-void serviceOta(){
-  
-}
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
   switch(type) {
@@ -234,6 +232,50 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
               Serial.println("HTTP_UPDATE_OK");
               break;
           }
+        } 
+        else if(root.containsKey("FIRMWARE")){
+          if(root["FIRMWARE"]=="GET"){
+            Serial.println("---CHEECK FIRRMWWARE");
+            if(http.begin("https://api.dropboxapi.com/2/files/list_folder")){
+              http.addHeader("Authorization", "Bearer "+String(Bearer));
+              http.addHeader("Content-Type", "application/json");
+              int httpResponseCode = http.POST("{\"path\":\"/ota\"}");
+              String response = http.getString();
+              JsonObject&  root = jsonBuffer.parseObject(response); 
+
+              String js = "{\"entries\":[";
+              Serial.println("---CHEECK response size->"+String(root["entries"].size()));
+              for(int i=0; i<root["entries"].size(); i++){
+                String str_slot = root["entries"][i];
+                JsonObject&  slot = jsonBuffer.parseObject(str_slot);
+                String name = slot["name"];
+                String client_modified = slot["client_modified"];
+                js+= "{\"name\":\""+ name +"\",\"client_modified\":\""+ client_modified +"\"},";
+              }
+              js = js.substring(0, js.length()-1);
+              js+="]}";
+               webSocket.sendTXT(num, "FIRM="+js);
+            }else{
+            }
+          }
+          // if(!http.begin(endpoint))
+        }
+        else if(root.containsKey("ADMIN")){
+          int i = root["ADMIN"].as<int>();
+          switch (i) {
+              case 1:{ // check pcf
+                webSocket.sendTXT(num, "admin="+String(ext_rtc.getSecondInDay()));
+              }break;
+              case 2:{ // set rtc
+
+                  for(int i=0; i<5; i++){
+                    ext_rtc.setTime(rtc.get());
+                    if(ext_rtc.check() && (ext_rtc.readStatus1()==0))
+                      break;
+                  }
+
+              }break;
+          }
         }
         webSocket.broadcastTXT("message here");
       } break;
@@ -288,6 +330,8 @@ void serviceEvent(){
           for (uint8_t i = 0; i < nn; i++)
           {
             String ssid = WiFi.SSID(i);
+            ssid.replace("<","");
+            ssid.replace(">","");
             unsigned int rssi = toWiFiQuality(WiFi.RSSI(i));
             if (ssid.length() == 0){
               ssid = "?";
@@ -298,6 +342,7 @@ void serviceEvent(){
             response += "</net>";
           }
           response += "</wifi>";
+
           IS_WIFI_SCANNING=false;
           // Serial.println(response);
           server.send(200, "text/xml", response);
@@ -321,6 +366,7 @@ void serviceEvent(){
           WiFi.disconnect();
           IS_WIFI_SETTING = true;
           IS_STA_NO_AP = false;
+          wifi_reconnect_count = 0;
           response = "update";
           server.send(200, "text/plain", response);
       }break;
@@ -337,20 +383,15 @@ void serviceEvent(){
         int y = root["YEAR"].as<int>();
         Serial.println("sv->"+String(hh)+":"+String(mm)+":"+String(sec));
         Serial.println("sv->"+String(day)+"/"+String(mon)+"/"+String(y));
-        ext_rtc.setTime(day, mon, (y%100), wday, hh, mm, sec);
-        ext_rtc.setTime(day, mon, (y%100), wday, hh, mm, sec);
-        // ext_rtc.setTime(day, mon, y%100, wday, hh, mm, sec);
-        // for (int i = 0; i < 3; i++) {
-        //   vTaskDelay(20);
-        //   if (ext_rtc.check() == true) {
-        //     rtc.setTime(ext_rtc.get());
-        //     break;
-        //   }
-        // }
-          if(ext_rtc.check())
-            response="update";
-          else response="err";
-          server.send(200, "text/plain", response);
+        for(int i=0; i<5; i++){
+          ext_rtc.setTime(day, mon, (y%100), wday, hh, mm, sec);
+          if(ext_rtc.check() && (ext_rtc.readStatus1()==0))
+            break;
+        }
+        if(ext_rtc.check())
+          response="update";
+        else response="err";
+        server.send(200, "text/plain", response);
       }
       case 5:{  // istar parameters
           String JSON = server.arg("JSON");
@@ -411,7 +452,7 @@ void serviceEvent(){
 
           TimeSchedule_Set[RELAY_1]  = root["NUM"].as<int>();
           Relay_[RELAY_1]->Number_Time_Schedule = root["NUM"].as<int>();
-          // String SLOT = getJsonVal(JSON, "SLOT");
+        
           for(int j=0; j<TimeSchedule_Set[RELAY_1]; j++){
             String str_slot = root["SLOT"][j];
             JsonObject&  slot = jsonBuffer.parseObject(str_slot);
@@ -649,7 +690,6 @@ void serviceEvent(){
             }
           }
         }else{  //remove device
-          int k=0;
           for(int i=0; i<RS485_MAX_DEVICE; i++){
             if(server.arg("id").toInt() == RS485_LIST_DEVICE[i].id){  
               for(int j=i; j<RS485_MAX_DEVICE; j++){
@@ -696,7 +736,7 @@ void serviceEvent(){
         server.send(200, "text/plain", response);
       }break;
   }
-}
+} 
 
 String getContentType(String filename){
   if(server.hasArg("download")) return "application/octet-stream";
@@ -725,7 +765,8 @@ bool handleFileRead(String path){
 
 String create_socket_json(){
   String js="{\"TIME\":" + String(SYSTEM_TIME) + ",\"";
-  js+="PCF8563\":" + String(0) + ",\"";    //ext_rtc.getSecondInDay()
+  js+="FIRMWARE\":\"" + String(FW_VERSION) + "\",\"";
+  js+="PCF8563\":" + String(0) + ",\"";    //ext_rtc.getSecondInDay()  // test rtc sđs
   js+="TEST_MODE\":" + String(IS_DURING_TEST_MODE) + ",\"";
   js+="LIVE_TIME\":" + String(Live_time) + ",\"";
   js+="RESET_COUNT\":" + String(Reset_count) + ",\"";
@@ -736,8 +777,8 @@ String create_socket_json(){
   js+="ADC2\":" + String(f_ADC[1]) + " ,\"";
   js+="ADC3\":" + String(f_ADC[2]) + " ,\"";
   js+="RL1_LIVE\":" + String(Relay_[0]->Time_live_on) +" ,\"";
-  js+="RL1_LIVE\":" + String(Relay_[1]->Time_live_on) +" ,\"";
-  js+="RL1_LIVE\":" + String(Relay_[2]->Time_live_on) + "}";
+  js+="RL2_LIVE\":" + String(Relay_[1]->Time_live_on) +" ,\"";
+  js+="RL3_LIVE\":" + String(Relay_[2]->Time_live_on) + "}";
   return js;
 }
 void debug_rs485_list(){

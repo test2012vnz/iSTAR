@@ -10,7 +10,8 @@ var other_slottime = [-1, -1, -1];
 var current_device = 1;
 var fr= new FileReader();
 var myip="";
-var ws = new WebSocket("ws://"+location.host+":81/" ); //   "ws://"+location.host+":81/"   "ws://localhost:81/"
+// var ws = new WebSocket("ws://localhost:81/");
+var ws = new WebSocket( "ws://"+location.host+":81/"); 
 var lang_list = {
 "vi":{
   "lang": "Ngôn ngữ: ",
@@ -118,6 +119,10 @@ var lang_list = {
   "txt-other-app": "Other application"
 }
 };
+function admin(task){
+  var mess = "{\"ADMIN\":"+task+"}"
+  ws.send(mess);
+}
 function lang_change(){
   var lang = document.getElementById('lang_select').value;
   hdsdvi = document.getElementsByClassName('hdsd-vi');
@@ -156,6 +161,17 @@ function lang_change(){
       }
   }
 }
+function sec2time(sec){
+  var time = "";
+  if(sec > 3600){
+    time += parseInt(Number(sec/3600)) + " giờ ";
+    sec = sec%3600;
+  }
+  if(sec > 60){
+     time += parseInt(Number(sec/60)) + " phút";
+  }else time = " 0 phút";
+  return time;
+}
 function readFile(id, txt){
   f = document.getElementById(id);
     fr.onload= function(){
@@ -184,45 +200,12 @@ function ota_update(file_id){
   xhr.send(formData);
 }
 function checkFirrmware(){
-  var req = new XMLHttpRequest();
-  req.open("POST", "https://api.dropboxapi.com/2/files/list_folder", false);
-  req.setRequestHeader("Authorization", "Bearer P2J36BpEat4AAAAAAAAAKQYx0i4sfguQiRc9B3xrkpsuF9rfUdKrIydiaoAztrHH");
-  req.setRequestHeader("Content-Type", "application/json");
-  req.send(JSON.stringify({path:"/ota"}));
-
-  var obj = JSON.parse(req.responseText)
-  if(obj.entries.length == 0)
-    console.log("File not found.")
-  else{
-    // for(i =0; i< obj.entries.length; i++){
-
-    //   console.log(obj.entries[i].name, obj.entries[i].client_modified);
-    //   var table = document.getElementById("table-firmware");
-    //   var row = table.insertRow(i+1); 
-    //   row.insertCell(0).innerHTML = obj.entries[i].name;
-    //   row.insertCell(1).innerHTML = obj.entries[i].client_modified.substring(0,10);
-    // }
-    var Internet_Table="<tr><th>SSID</th><th>RSSID</th></tr>";
-    document.getElementById("TBL-FIRM").innerHTML=Internet_Table;
-    for(var i=0;i<obj.entries.length;i++){  //style='text-align: center'
-        Internet_Table += "<tr><td>" + obj.entries[i].name + "</td><td >" + obj.entries[i].client_modified.substring(0,10) + "</td></tr>";
-    }
-    document.getElementById("TBL-FIRM").innerHTML=Internet_Table;
-  }
-    onRowClick("TBL-FIRM", function (row){
-      var table = document.getElementById("TBL-FIRM"),
-      rows = table.getElementsByTagName("tr"), i;
-      for (i = 0; i < rows.length; i++){
-        table.rows[i].style.backgroundColor=('transparent');
-      }
-      document.getElementById('txtFirmware').value = row.cells[0].innerHTML;
-      row.style.backgroundColor='#3498DB';
-    });
+  ws.send("{\"FIRMWARE\":\"GET\"}");
 }
 function FirmwareUpdate(){
   var mess = "{\"UPDATE_FIRMWARE\": \""+ document.getElementById('txtFirmware').value +"\"}";
   console.log(mess);
-   ws.send(mess);
+  ws.send(mess);
 }
 /**********************************************************************/
 function http_post(mess,err,url,handle){
@@ -293,16 +276,13 @@ function ip_local(){
   pc.onicecandidate = function(event){
    if (event && event.candidate && event.candidate.candidate){
     var s = event.candidate.candidate.split('\n');
-    console.log(s);
     ip.push(s[0].split(' ')[4]);
    }
   }
  }
  return ip;
 }
-function sendSocketMsg(mess){
-  ws.send("s=0&LED=1");
-}
+
 function TestComponents(component, num, state){
   var test_js = { TEST:'', NUM:'', STATE:''};
   test_js.TEST = component;
@@ -323,7 +303,7 @@ function Websocket(){
        };
        ws.onmessage = function (evt) { 
           var received_msg = evt.data;
-          // console.log(received_msg);
+          console.log(received_msg);
           if(received_msg.substring(0,3)=="ips"){
             myip = received_msg.substring(4, received_msg.length)
           }
@@ -333,13 +313,14 @@ function Websocket(){
             }
           }
           else if(received_msg.substring(0,3)=="pkg"){
+            console.log(received_msg.substring(0,3));
             var obj = JSON.parse(received_msg.substring(4, received_msg.length));
             var parent = document.getElementById('status-sys').children;
             var d = new Date(1970,0,1); 
             d.setSeconds(obj.TIME);
             parent[1].innerHTML = obj.FIRMWARE;
             parent[4].innerHTML = d.toLocaleTimeString();
-            parent[7].innerHTML = Number(obj.LIVE_TIME/60) +" giờ";
+            parent[7].innerHTML =  obj.LIVE_TIME + " phút";
             parent[10].innerHTML = obj.RESET_COUNT;
 
             parent = document.getElementById('status-connect').children;
@@ -357,6 +338,11 @@ function Websocket(){
             parent[1].innerHTML = obj.ADC1 +"°C";
             parent[4].innerHTML = obj.ADC2 +"°C";
             parent[7].innerHTML = obj.ADC3 +"°C";
+            //
+            parent = document.getElementById('status-relay').children;
+            parent[4].innerHTML = sec2time(obj.RL1_LIVE);
+            parent[11].innerHTML = sec2time(obj.RL2_LIVE);
+            parent[18].innerHTML = sec2time(obj.RL3_LIVE);
             // 
             d.setSeconds(obj.PCF8563);
             console.log(obj.PCF8563)
@@ -371,7 +357,8 @@ function Websocket(){
           }else if(received_msg.substring(0,3)=="log"){
               var d = new Date();
               var n = d.toTimeString();
-            document.getElementById("logger").value = d.toTimeString().substring(0,8)+" | " + received_msg.substring(4, received_msg.length)
+            document.getElementById("logger").value = d.toTimeString().substring(0,8)+" | " 
+                                      + received_msg.substring(4, received_msg.length)
             +"\n"+ document.getElementById("logger").value ;
           }
           else if(received_msg.substring(0,4)=="TEST"){
@@ -381,7 +368,28 @@ function Websocket(){
             parent[0].children[1].innerHTML = obj["ADC"][0];;
             parent[2].children[1].innerHTML = obj["ADC"][1];;
             parent[4].children[1].innerHTML = obj["ADC"][2];;
-
+          }else if(received_msg.substring(0,4)=="FIRM"){
+            console.log(received_msg.substring(5,received_msg.length));
+            var obj = JSON.parse(received_msg.substring(5, received_msg.length));
+            if(obj.entries.length == 0)
+              console.log("File not found.")
+            else{
+              var Internet_Table="<tr><th>SSID</th><th>RSSID</th></tr>";
+              document.getElementById("TBL-FIRM").innerHTML=Internet_Table;
+              for(var i=0;i<obj.entries.length;i++){  //style='text-align: center'
+                  Internet_Table += "<tr><td>" + obj.entries[i].name + "</td><td >" + obj.entries[i].client_modified.substring(0,10) + "</td></tr>";
+              }
+              document.getElementById("TBL-FIRM").innerHTML=Internet_Table;
+            }
+              onRowClick("TBL-FIRM", function (row){
+                var table = document.getElementById("TBL-FIRM"),
+                rows = table.getElementsByTagName("tr"), i;
+                for (i = 0; i < rows.length; i++){
+                  table.rows[i].style.backgroundColor=('transparent');
+                }
+                document.getElementById('txtFirmware').value = row.cells[0].innerHTML;
+                row.style.backgroundColor='#3498DB';
+              });
           }
        };
        ws.onclose = function() { 
@@ -616,7 +624,8 @@ function Scan_SSID(xml){
 function ScanShow(){
     var Internet_Table="<tr><th>SSID</th><th>RSSID</th></tr>";
     for(var i=0;i<Internet_List.length;i++){
-        Internet_Table += "<tr><td>" + Internet_List[i][0] + "</td><td style='text-align: center'>" + Internet_List[i][1] + "</td></tr>";
+        Internet_Table += "<tr><td>" + Internet_List[i][0] + "</td><td style='text-align: center'>" 
+        + Internet_List[i][1] + "</td></tr>";
     }
     document.getElementById("WIFI_SCAN").innerHTML=Internet_Table;
 
@@ -1108,28 +1117,28 @@ function update_rs485(obj) {
       if(document.getElementById('rs485-sample-'+j))
         remove_rs485_device(j);
     }
-  obj.DEVICES = sort_list(obj.DEVICES);
-  var table = document.getElementById("table-rs485");
-  var stt = 1;
+    obj.DEVICES = sort_list(obj.DEVICES);
+    var table = document.getElementById("table-rs485");
+    var stt = 1;
 
-  for(r=0; r < obj.NUM; r++){
-    var row = table.insertRow(r+1);
-    if(obj.DEVICES[k+1]!=obj.DEVICES[k-1])
-      stt=1;
-    row.insertCell(0).innerHTML = stt;
+    for(r=0; r < obj.NUM; r++){
+      var row = table.insertRow(r+1);
+      if(obj.DEVICES[k+1]!=obj.DEVICES[k-1])
+        stt=1;
+      row.insertCell(0).innerHTML = stt;
 
-    if(obj.DEVICES[k+1]==0)
-      row.insertCell(1).innerHTML ="Đồng hồ MFM";
-    else if(obj.DEVICES[k+1]==1)
-      row.insertCell(1).innerHTML ="Đồng hồ DPM";
-    else if(obj.DEVICES[k+1]==2)
-       row.insertCell(1).innerHTML = "Inverter SolarBK";
+      if(obj.DEVICES[k+1]==0)
+        row.insertCell(1).innerHTML ="Đồng hồ MFM";
+      else if(obj.DEVICES[k+1]==1)
+        row.insertCell(1).innerHTML ="Đồng hồ DPM";
+      else if(obj.DEVICES[k+1]==2)
+         row.insertCell(1).innerHTML = "Inverter SolarBK";
 
-    row.insertCell(2).innerHTML = obj.DEVICES[k];
-    row.insertCell(3).innerHTML = "<button  class=\"btn btn-delete\" onclick=\"delete_row_rs485("+(r+1)+")\">Xóa</button>";
-    k+=2;
-    stt++;
-  }
+      row.insertCell(2).innerHTML = obj.DEVICES[k];
+      row.insertCell(3).innerHTML = "<button  class=\"btn btn-delete\" onclick=\"delete_row_rs485("+(r+1)+")\">Xóa</button>";
+      k+=2;
+      stt++;
+    }
   }
 
 }
@@ -1276,7 +1285,6 @@ function onResizeScreen(){
       //openNav();
      document.getElementById('lang-content').style.display = "block";
   }
-
 }
 /**********************************************/
 var isFocused = false;
@@ -1307,25 +1315,29 @@ document.onreadystatechange = function () {
   } else if (state == 'complete') {
     lang_change();
     http_post("m=14","Send default json frame","/c",14);
-        if(window.innerWidth < 1300)
-          document.getElementById('lang-content').style.display = "none";
-        document.getElementById('loading').style.display="none";
-        document.getElementById('container').style.display="block";
-        document.getElementById('devicecontent').click();
-        document.getElementById('tab-wifi-content').click();
-         document.getElementById('btn-sidebar').click();
+    if(window.innerWidth < 1300)
+      document.getElementById('lang-content').style.display = "none";
+    else 
+      document.getElementById('btn-sidebar').click();
+    document.getElementById('loading').style.display="none";
+    document.getElementById('container').style.display="block";
+    document.getElementById('devicecontent').click();
+    document.getElementById('tab-wifi-content').click(); //btn-istar-sys
+    document.getElementById('btn-istar-sys').click();
+
+    // document.getElementById('btn-sidebar').click();
     // document.getElementById("mySidenav").style.width = "0px";
     // document.getElementById("main").style.marginLeft = "0px";
-        if(getCookie("username")=='bWFudQ=='){
-          var x = document.getElementById('mySidenav');
-          x.removeChild(document.getElementById('hwtest'));
-          x.removeChild(document.getElementById('deviceset'));
-          x.removeChild(document.getElementById('rs485set'));
-          document.getElementById("devicecontent").click();
-        }
-        else {
-          document.getElementById("devicecontent").click();
-        }
+    if(getCookie("username")=='bWFudQ=='){
+      var x = document.getElementById('mySidenav');
+      x.removeChild(document.getElementById('hwtest'));
+      x.removeChild(document.getElementById('deviceset'));
+      x.removeChild(document.getElementById('adminsetting'));
+      document.getElementById("devicecontent").click();
+    }
+    else {
+      document.getElementById("devicecontent").click();
+    }
   }
 }
 

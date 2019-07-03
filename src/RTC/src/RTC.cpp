@@ -132,6 +132,8 @@ tm RTC::get()
     struct tm timeinfo={0};
     if(getLocalTime(&timeinfo))
     {
+        Serial.println("iternal rtc->"+String(timeinfo.tm_hour)+":"+String(timeinfo.tm_min)+":"+String(timeinfo.tm_sec));
+        Serial.println("iternal rtc->"+String(timeinfo.tm_mday)+"/"+String(timeinfo.tm_mon)+"/"+String(timeinfo.tm_year));
         return timeinfo;
     }
     return timeinfo;

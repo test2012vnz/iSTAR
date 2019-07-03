@@ -11,7 +11,7 @@
 </style>
 <body>
 	<div id="loading">
-		<h2>LOADING</h2>
+		<h2>HELLO</h2>
 	</div>
 	<div id="container" style="display: none;">
 	<div id="main">
@@ -65,28 +65,25 @@
 					<div id="test-wraper">
 						<h3 style="margin-bottom: 5px;">Đèn, còi</h3>
 						<div class="test-content">
-							<label><a style="display: inline-block; width: 200px;">RUN LED</a><button class="btn btn-test" onclick="TestComponents('LED',1,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('LED',1,0)">Tắt</button></label><br>
-							<label><a style="display: inline-block; width: 200px;">CONNECTION LED</a><button class="btn btn-test" onclick="TestComponents('LED',2,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('LED',2,0)">Tắt</button></label><br>
-							<label><a style="display: inline-block; width: 200px;">SPEAKER</a><button class="btn btn-test" onclick="TestComponents('LED',3,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('LED',3,0)">Tắt</button></label><br>
+							<label><a class="txt-test-led">RUN LED</a><button class="btn btn-test" onclick="TestComponents('LED',1,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('LED',1,0)">Tắt</button></label><br>
+							<label><a class="txt-test-led">CONNECTION LED</a><button class="btn btn-test" onclick="TestComponents('LED',2,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('LED',2,0)">Tắt</button></label><br>
+							<label><a class="txt-test-led">SPEAKER</a><button class="btn btn-test" onclick="TestComponents('LED',3,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('LED',3,0)">Tắt</button></label><br>
 						</div> 
 						<hr style="width: 100%;">
 						<h3 style="margin-bottom: 5px;">Cảm biến nhiệt độ</h3>
 						<div class="test-content" id="adc-test">
-							<label><a style="display: inline-block; width: 120px;">ADC 1</a><span class="adc-test" style="display: inline-block; width: 90px;">0</span><button class="btn" onclick="TestComponents('ADC',0,0)" style="padding: none;">Kiểm tra</button></label><br>
-							<label><a style="display: inline-block; width: 120px;">ADC 2</a><span class="adc-test">0</span><button class="btn" style="visibility: hidden;"></button></label><br>
-							<label><a style="display: inline-block; width: 120px;">ADC 3</a><span class="adc-test">0</span><button class="btn" style="visibility: hidden;"></button></label>
+							<label><a class="txt-test-adc">ADC 1</a><span class="adc-test" style="display: inline-block; width: 90px;">0</span><button class="btn" onclick="TestComponents('ADC',0,0)" style="padding: none;">Kiểm tra</button></label><br>
+							<label><a class="txt-test-adc">ADC 2</a><span class="adc-test">0</span><button class="btn" style="visibility: hidden;"></button></label><br>
+							<label><a class="txt-test-adc">ADC 3</a><span class="adc-test">0</span><button class="btn" style="visibility: hidden;"></button></label>
 						</div>
 						<hr style="width: 100%;">
 						<h3 style="margin-bottom: 5px;">Relay</h3>
 						<div class="test-content">
-							<label><a style="display: inline-block; width: 200px;">Relay 1</a><button class="btn btn-test" onclick="TestComponents('RL',1,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('RL',1,0)">Tắt</button></label><br>
-							<label><a style="display: inline-block; width: 200px;">Relay 2</a><button class="btn btn-test" onclick="TestComponents('RL',2,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('RL',2,0)">Tắt</button></label><br>
-							<label><a style="display: inline-block; width: 200px;">Relay 3</a><button class="btn btn-test" onclick="TestComponents('RL',3,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('RL',3,0)">Tắt</button></label><br>
+							<label><a class="txt-test-led">Relay 1</a><button class="btn btn-test" onclick="TestComponents('RL',1,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('RL',1,0)">Tắt</button></label><br>
+							<label><a class="txt-test-led">Relay 2</a><button class="btn btn-test" onclick="TestComponents('RL',2,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('RL',2,0)">Tắt</button></label><br>
+							<label><a class="txt-test-led">Relay 3</a><button class="btn btn-test" onclick="TestComponents('RL',3,1)">Bật</button><button class="btn btn-test" onclick="TestComponents('RL',3,0)">Tắt</button></label><br>
 						</div>
 						<!-- <hr style="width: 100%;"> -->
-					</div>
-					<div>
-						<button onclick="sendSocketMsg()">test ws</button>
 					</div>
 					<div class="spinner"> 
 						<div class="bounce1"></div> 
@@ -402,9 +399,9 @@
 						</div>
 					</div>
 				</div>
-				<div class="navcontent" id="status-tab">
+				<div class="navcontent" id="status-tab" style="padding: 6px 10px;">
 					<h3>Thông tin hệ thống</h3>
-					<div class="col-left" style="margin-top: 10px;">
+					<div class="col-left" style="margin-top: 10px; padding: 6px 10px;">
 						<h3>Trạng thái thiết bị</h3>
 						<div class="status-content" id="status-sys">
 							<span>Phiên bản phần mềm: </span><span style="padding-left: 10px;">dsdsds</span><br>
@@ -425,17 +422,21 @@
 							<span>Nhiệt độ cảm biến 3: </span><span style="padding-left: 10px;"></span><br>
 						</div>
 					</div>
-					<div class="col-right" style="margin-top: 10px;">
+					<div class="col-right" style="margin-top: 10px; padding: 6px 10px;">
 						<h3>Trạng thái hoạt động Relay</h3>
-						<div class="status-content">
+						<div class="status-content" id="status-relay">
 							<span>Relay 1:</span><span></span><br>
-							<span>Số giờ hoạt động trong ngày:</span><span></span><br>
+							<span>Số giờ hoạt động trong ngày: </span><span style="padding-left: 10px;"></span><br>
 							<hr style="width: 100%;">
 							<span>Relay 2:</span><span></span><br>
-							<span>Số giờ hoạt động trong ngày:</span><span></span><br>
+							<span>Số giờ hoạt động trong ngày: </span><span style="padding-left: 10px;"></span><br>
 							<hr style="width: 100%;">
-							<span>Số giờ hoạt động trong ngày:</span><span></span><br>
+							<span>Relay 3:</span><span></span><br>
+							<span>Số giờ hoạt động trong ngày: </span><span style="padding-left: 10px;"></span><br>
 						</div>
+					</div>
+					<div>
+						
 					</div>
 				</div>
 				<div class="navcontent" id="admin-tab" style=" padding: 10px;">
@@ -443,7 +444,7 @@
 						<h3>OTA Webserver</h3>
 						<div style="position: relative;">
 							<input  class="input-type" id="uploadFile" style="width: 200px; position: relative; left: 0px;" placeholder="Choose File" readonly/>
-							<label id="lb-upload" style="position: absolute; right: 0;">Choose file<input id="uploadBtn" type="file" class="upload" /></label>
+							<label id="lb-upload" style="position: absolute; right: 0;">Choose file<input id="uploadBtn" type="file" class="upload" multiple/></label>
 							<div style="margin-top: 10px;">
 								<button class="btn"  onclick="ota_update('uploadBtn')">Update</button>
 							</div>
@@ -476,6 +477,13 @@
 						<h3>Device checking</h3>
 						<div id="checking-device">
 							<span>RTC PCF8563: </span><span style="padding-left: 10px;">dsdsds</span><br>
+							<hr style="width: 100%">
+							<div>
+								<span>SEC:</span><span></span>
+								<div><button class="btn" onclick="admin('1')">CHECK</button>
+									<button class="btn" onclick="admin('2')">SET</button></div>
+
+							</div>
 						</div>
 					</div>
 				</div>

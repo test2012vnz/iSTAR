@@ -37,7 +37,7 @@ typedef enum{
 
 } Error_List_Enum;
 
-typedef class {
+typedef struct {
 	Error_List_Enum err[16] = {};
 	char time[16][10] = {};
 	String toString(){

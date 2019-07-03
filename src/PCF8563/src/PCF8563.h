@@ -89,7 +89,7 @@ class PCF8563 {
 
     void zeroClock();           /* Zero date/time, alarm / timer, default clkout */
     void clearStatus();         /* set both status bytes to zero */
-    byte readStatus2();
+    byte readStatus1();
     void clearVoltLow(void);    /* Only clearing is possible */
 
     tm get();     /* get date and time vals to local vars */

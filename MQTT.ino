@@ -7,17 +7,22 @@ void MQTT_TASK() {
   httpsClient.setCACert(root.c_str());
   httpsClient.setCertificate(cert.c_str());
   httpsClient.setPrivateKey(pri.c_str());
-  mqttClient.setServer(endpoint, 8883);
+  mqttClient.setServer(endpoint, MQTTport);
   mqttClient.setCallback(MQTT_callback);
+
   String send_pkg="";
   int tick = 0;
   for (;;) {
-    // Serial.println("Free heap->"+String(ESP.getFrseeHeap()));
+
     if (WiFi.status() == WL_CONNECTED){
       if(!mqttClient.connected()){
          CON_Status = iCON_MQTT_Fail;
-        connectAWSIoT();
-        vTaskDelay(10000);
+        if(connectAWSIoT()){
+           CON_Status = iCON_OK;
+        }else{
+          CON_Status = iCON_MQTT_Fail;
+          vTaskDelay(30000);
+        }
       }else{
         mqttClient.loop();
         if(millis()/1000 - tick >10){
@@ -25,25 +30,27 @@ void MQTT_TASK() {
             send_pkg = iStar_pkg;
           }
           else{
-              send_pkg = create_base_json();
-              send_pkg = nested_json(send_pkg, create_json_frame(),"iStarList");  //
-              webSocket.broadcastTXT("log="+send_pkg);
+            send_pkg = create_base_json();
+            send_pkg = nested_json(send_pkg, create_json_frame(),"iStarList");  //
+            webSocket.broadcastTXT("log="+send_pkg);
           }
           if(send_pkg!=""){
             webSocket.broadcastTXT("log="+send_pkg);
-            mqttClient.publish(pubTopic, send_pkg.c_str());
+            mqttClient.publish(pubTopic, send_pkg.c_str());   /// send mqtt package
           }
           tick = millis()/1000;
         }
       }
-
     } else {
-      // mqttClient.disconnect();
       CON_Status = iCON_Wifi_Fail;
-      if(!IS_STA_NO_AP)
+      if((!IS_STA_NO_AP) &&(wifi_reconnect_count < 3)){
         Wifi_Init();
-      // if(WiFi.status() == WL_CONNECTED)
-      //   RTC_Init();
+        if(WiFi.status()==WL_CONNECTED){
+          wifi_reconnect_count = 0;
+        }else{
+          wifi_reconnect_count++;
+        }
+      }
       vTaskDelay(6000);
     }
     vTaskDelay(1000);
@@ -63,10 +70,8 @@ void get_certificate(){
   memcpy(certificate, cert.c_str(), cert.length());
   memcpy(private_key,pri.c_str(),pri.length());
 }
-void mySubCallBackHandler (char *topicName, int payloadLen, char *payLoad)
-{
-}
-void connectAWSIoT() {
+
+bool connectAWSIoT() {
   WiFi.mode(WIFI_AP_STA );
   Serial.println("---------reconnect.---------");
   String clientid = SERIAL_NUMBER + String(random(0, 0xff));
@@ -75,10 +80,11 @@ void connectAWSIoT() {
       int qos = 0;
       mqttClient.subscribe(subTopic, qos);
       Serial.println("Subscribed.");
-      CON_Status = iCON_OK;
+      
+      return true;
   } else {
       Serial.println("Failed. Error state="+String(mqttClient.state()));
-      vTaskDelay(20000);
+      return false;
   }
 }
 
@@ -198,7 +204,10 @@ String get_Relay_Schedule_str(int i){
   for(int j=0; j<5; j++){
     str+=String(Relay_[i]->R[j].Time_Schedule.timestamp_start/3600)+":";
     str+=String(Relay_[i]->R[j].Time_Schedule.timestamp_start%3600/60)+"-";
-    str+=String((Relay_[i]->R[j].Time_Schedule.timestamp_start+Relay_[i]->R[j].Time_Schedule.duration)/3600)+":";
+    int end_t = (Relay_[i]->R[j].Time_Schedule.timestamp_start+Relay_[i]->R[j].Time_Schedule.duration)/3600;
+    if(end_t>24)
+      end_t -= 24;
+    str+=String(end_t)+":";
     str+=String((Relay_[i]->R[j].Time_Schedule.timestamp_start+Relay_[i]->R[j].Time_Schedule.duration)%3600/60)+"/";
   }
   return str.substring(0,str.length()-1);
@@ -215,7 +224,7 @@ String get_Relay_Loop_str(int i){
 String create_json_frame(){
   String json = "";
   json+= "{\"serial\":\""+ String(SERIAL_NUMBER)+"\",";
-  json+= "\"iStarID\":" + String(0) +",";
+  json+= "\"id\":" + String(0) +",";
   json+= "\"status\":" + String(0) +",";
   json+= "\"A1\":" + String(DEVICE) +",";
   json+= "\"A2\":" + String(iStar_Params.Manual) +",";

@@ -103,14 +103,16 @@ bool Memory_RS485_Get_List(){
     EEPROM.get<RS485_LIST_DEVICE_>(P, RS485_LIST_DEVICE[i]);
     //Serial.println("id->"+String(RS485_LIST_DEVICE[i].id)+" device->"+String(RS485_LIST_DEVICE[i].DEVICE));
   }
+  return 1;
 }
 
 bool Memory_RS485_Set_List(){
   for(int i=0; i< RS485_MAX_DEVICE; i++){
     uint32_t P= sizeof(Relay_Basic) * ((MAXIMUM_NUMBER_TIME_SCHEDULE * 3) + 6)+sizeof(iStar_Parameters) + sizeof(RS485_LIST_DEVICE_)*i;
     EEPROM.put<RS485_LIST_DEVICE_>(P, RS485_LIST_DEVICE[i]);
-    EEPROM.commit();
+    return EEPROM.commit();
   }
+  return false;
 }
 bool Memory_istar_set(){
    if (IS_EPPROM_OK == true) {
@@ -125,8 +127,9 @@ bool Memory_temperature_set(){
     storage.NVS_SetUInt("RL_TEMPERATURE", String("RL"+String(i)+"TON").c_str(), iStarTemp[i].T_ON);
     storage.NVS_SetUInt("RL_TEMPERATURE", String("RL"+String(i)+"TOFF").c_str(), iStarTemp[i].T_OFF);
   }
+   return 1;
 }
-bool Memory_temperature_get(){
+void Memory_temperature_get(){
   for(int i=0; i< RELAY_SIZE; i++){
     iStarTemp[i].T_ON = storage.NVS_GetUInt("RL_TEMPERATURE", String("RL"+String(i)+"TON").c_str());
     iStarTemp[i].T_OFF = storage.NVS_GetUInt("RL_TEMPERATURE", String("RL"+String(i)+"TOFF").c_str());
@@ -226,17 +229,17 @@ void RTC_Init() {
   }
   return;
 EXT_SYNS:
-  Serial.println("EXT SYNC");
+  Serial.println("-----EXT SYNC----");
   deltaT = abs((rtc.converToUnixTime() - rtc.converToUnixTime(ext_rtc.get()))); //
-  for (int i = 0; i < 3; i++) {
+
+  for(int i=0; i<5; i++){
     ext_rtc.setTime(rtc.get());
-    if (ext_rtc.check() == true) {
-      FAIL_STATUS &= ~EXT_RTC_ERROR;
-      return;
-    }
-    // set error
-    FAIL_STATUS |= EXT_RTC_ERROR;
+    if(ext_rtc.check() && (ext_rtc.readStatus1()==0))
+      break;
+    FAIL_STATUS &= ~EXT_RTC_ERROR;
   }
+  FAIL_STATUS |= EXT_RTC_ERROR;
+  
   return;
 INT_SYNS:
   Serial.println("INT SYNC");
@@ -258,7 +261,7 @@ float get_temp_ntc10k(int port_analog) {
   float b = 2.320549520e-4;
   float c = 0.9747106158e-7;
   float val = 0;
-  float R, T;
+  float T;
   for (int i = 0; i < 10; i++) {
     val += analogRead(port_analog);
     delayMicroseconds(1);
@@ -276,7 +279,7 @@ void iStar_CheckCondition() {
     FAIL_STATUS &= ~TT_ERROR;
     iStarMode[0].on_condition = ((TT - TB) >= TT_ON);
     iStarMode[0].off_condition = ((TT - TB) < TT_OFF);
-    iStarMode[0].fail_condition = (TT >= TT_MAX) || (TT-TB>TCF) || (FAIL_STATUS & TB_ERROR != 0);
+    iStarMode[0].fail_condition = (TT >= TT_MAX) || (TT-TB>TCF) || ((FAIL_STATUS & TB_ERROR) != 0);
   } else {
     FAIL_STATUS |= TT_ERROR;
     iStarMode[0].fail_condition = true;
@@ -286,19 +289,17 @@ void iStar_CheckCondition() {
     FAIL_STATUS &= ~TB_ERROR;
     iStarMode[1].on_condition = (TB - TH) >= TB_ON;
     iStarMode[1].off_condition = (TB - TH) < TB_OFF;
-    iStarMode[1].fail_condition = (TB >= TB_MAX) ||(TB-TH>TRF) || (FAIL_STATUS & TH_ERROR != 0);
+    iStarMode[1].fail_condition = (TB >= TB_MAX) ||(TB-TH>TRF) || ((FAIL_STATUS & TH_ERROR) != 0);
   } else {
     FAIL_STATUS |= TB_ERROR;
     iStarMode[1].fail_condition = true;
   }
 
-  static bool is_heater_running = false;
-
   if (TH > MIN_TEMP && TH < MAX_TEMP) {
     FAIL_STATUS &= ~TH_ERROR;
     iStarMode[2].on_condition = (TB_SET - TB) >= TH_ON;
     iStarMode[2].off_condition = TB > TB_SET;
-    iStarMode[2].fail_condition = (TB > TB_MAX) || (FAIL_STATUS & TB_ERROR != 0); //|| 
+    iStarMode[2].fail_condition = (TB > TB_MAX) || ((FAIL_STATUS & TB_ERROR) != 0); //|| 
 
     // if(iStarMode[2].fail!=0 || iStarMode[2].off_condition==1){
     //   is_heater_running = false;

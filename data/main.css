@@ -470,6 +470,14 @@ textarea{
 #chose-device a{font-size: 18px;}
 #rs485-slave-id{width: 180px;}
 #open-hdsd{ position: fixed; top: 40%; display: none; width: 50px; transition: 0.3s;}
+/* tab test mode */
+.txt-test-led, .txt-test-adc {
+	display: inline-block; 
+	width: 200px;
+}
+.txt-test-adc{
+	width: 120px;
+}
 /*****************************************/
 
 .test-content * {
@@ -577,9 +585,10 @@ textarea{
 		padding: none;
 	}
 	.col-left, .col-right{
+		
 		float: none;
 		padding: 2px;
-		min-width: 100%;
+		width: auto;
 		height: auto;
 	}
 	.col-tittle{ padding: none;}
@@ -590,5 +599,11 @@ textarea{
 	#test-wraper{
 		width: auto;
 		margin-right: 10px;
+	}
+	.txt-test-led{
+		width: 180px;
+	}
+	.txt-test-adc{
+		width: 100px;
 	}
 }

@@ -5,6 +5,8 @@
 
 PCF8563::PCF8563(int sda, int scl)
 {
+    pinMode(sda,INPUT_PULLUP);
+    pinMode(scl,INPUT_PULLUP);
     Wire.begin(sda, scl);
     PCF8563_ADDR = RTCC_R>>1;
 }
@@ -51,17 +53,19 @@ void PCF8563::clearStatus()
     Wire.write((byte)0x0);                 //control/status2
     Wire.endTransmission();
 }
-
+byte PCF8563::readStatus1(){
+    return status1;
+}
 tm PCF8563::get(void){
-    vTaskDelay(50);
     Wire.beginTransmission(PCF8563_ADDR);
     Wire.write((byte)RTCC_STAT1_ADDR);
     Wire.endTransmission();
     /* As per data sheet, have to read everything all in one operation */
     uint8_t readBuffer[16] = {0};
     Wire.requestFrom(PCF8563_ADDR,  9);
-    for (int  i=0; i < 9; i++)
+    for (int  i=0; i < 9; i++){
         readBuffer[i] = Wire.read();
+    }
 
     // status bytes
     status1 = readBuffer[0];
@@ -89,10 +93,10 @@ tm PCF8563::setTime(byte day, byte month, byte year, byte weekday,  byte hour, b
         0=20xx
         1=19xx
     */
-    initClock();
     vTaskDelay(50);
+    clearStatus();
     // zeroClock();
-    
+    vTaskDelay(50);
     month = decToBcd(month);
     month &= ~RTCC_CENTURY_MASK;
     /* As per data sheet, have to set everything all in one operation */
@@ -106,7 +110,7 @@ tm PCF8563::setTime(byte day, byte month, byte year, byte weekday,  byte hour, b
     Wire.write(month);                 //set month, century to 1
     Wire.write(decToBcd(year));        //set year to 99
     Wire.endTransmission();
-
+    vTaskDelay(50);
     return get();
 }
 
@@ -141,8 +145,8 @@ bool PCF8563::check(){
 }
 
 bool PCF8563::check(tm t){
-    Serial.println("ext rtc->"+String(t.tm_hour)+":"+String(t.tm_min)+":"+String(t.tm_sec));
-    Serial.println("ext rtc->"+String(t.tm_mday)+"/"+String(t.tm_mon)+"/"+String(t.tm_year));
+    Serial.println("ext rtc->"+String(DateTime.tm_hour)+":"+String(DateTime.tm_min)+":"+String(DateTime.tm_sec));
+    Serial.println("ext rtc->"+String(DateTime.tm_mday)+"/"+String(DateTime.tm_mon)+"/"+String(DateTime.tm_year));
     if(t.tm_hour>=24|| t.tm_min>=60)
         return false;
     if(t.tm_year + 100 > (2016 - 1900))

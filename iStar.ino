@@ -4,6 +4,7 @@ void setup() {
   Memory_Init();
   Webserver_Init();
   Memory_RS485_Init();
+  vTaskDelay(3000);
   Timer_Init();
   vTaskDelay(3000);
   Serial.println("START");
@@ -38,6 +39,7 @@ void control_Task(void *pvParameters) {
         storage.NVS_SetUInt("SYSTEM", "LIVE_TIME", Live_time);
       }
       if(SYSTEM_TIME%43200==0){
+        wifi_reconnect_count = 0;
         RTC_Init();
       }
       RUN_Status = iRUN_OK;
@@ -46,7 +48,7 @@ void control_Task(void *pvParameters) {
         Relay_Control_.run(SYSTEM_TIME);        ////
       int k = 5;
       for(int i=0; i<3; i++){
-        if(iStarMode[i].fail==1){ // failover time
+        if(iStarMode[i].fail==1){ // fail over time
           FAIL_STATUS |= (1<<(k));
         } else FAIL_STATUS &= ~(1<<(k));
         if(iStarMode[i].fail==2){ // fail
