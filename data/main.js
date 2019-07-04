@@ -10,8 +10,8 @@ var other_slottime = [-1, -1, -1];
 var current_device = 1;
 var fr= new FileReader();
 var myip="";
-// var ws = new WebSocket("ws://localhost:81/");
-var ws = new WebSocket( "ws://"+location.host+":81/"); 
+var ws = new WebSocket("ws://localhost:81/");
+// var ws = new WebSocket( "ws://"+location.host+":81/"); 
 var lang_list = {
 "vi":{
   "lang": "Ngôn ngữ: ",

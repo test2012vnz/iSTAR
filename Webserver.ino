@@ -236,13 +236,9 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
         else if(root.containsKey("FIRMWARE")){
           if(root["FIRMWARE"]=="GET"){
             Serial.println("---CHEECK FIRRMWWARE");
-            if(http.begin("https://api.dropboxapi.com/2/files/list_folder")){
-              http.addHeader("Authorization", "Bearer "+String(Bearer));
-              http.addHeader("Content-Type", "application/json");
-              int httpResponseCode = http.POST("{\"path\":\"/ota\"}");
-              String response = http.getString();
+            String response = box.getListFolderString("ota");
+            if(response!=""){
               JsonObject&  root = jsonBuffer.parseObject(response); 
-
               String js = "{\"entries\":[";
               Serial.println("---CHEECK response size->"+String(root["entries"].size()));
               for(int i=0; i<root["entries"].size(); i++){
@@ -255,10 +251,17 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
               js = js.substring(0, js.length()-1);
               js+="]}";
                webSocket.sendTXT(num, "FIRM="+js);
-            }else{
             }
+            /************************************************************/
+            String VersionFile = box.getFileString("version.json");
+            JsonObject&  root = jsonBuffer.parseObject(VersionFile);
+            JsonObject&  iStarJSON = jsonBuffer.parseObject(root["iSTAR"].as<String>());
+            Serial.println("---Current Version: "+String(FW_VERSION));
+            Serial.println("---OTA Version:     "+String(iStarJSON["version"].as<String>()));
+            Serial.println("---OTA File   :     "+String(iStarJSON["firmware"].as<String>()));
+
+            /************************************************************/
           }
-          // if(!http.begin(endpoint))
         }
         else if(root.containsKey("ADMIN")){
           int i = root["ADMIN"].as<int>();

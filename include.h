@@ -63,7 +63,6 @@ bool IS_WIFI_SCANNING = false;
 bool IS_STA_NO_AP = false;
 int wifi_reconnect_count = 0;
 
-const char Bearer[] = "P2J36BpEat4AAAAAAAAAKQYx0i4sfguQiRc9B3xrkpsuF9rfUdKrIydiaoAztrHH";
 const char endpoint[] = "a2lv3cywt6s2d5-ats.iot.ap-northeast-1.amazonaws.com";
 const int MQTTport = 8883;
 
@@ -76,8 +75,7 @@ char rootca[2048];
 char certificate[2048];
 char private_key[2048];
 
-dropbox box;          // dropbox ota
-
+dropbox box;                             // dropbox ota
 
 WiFiClientSecure httpsClient;
 PubSubClient mqttClient(httpsClient);
